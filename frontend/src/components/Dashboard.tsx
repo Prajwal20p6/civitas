@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
 import { GoogleMapComponent } from './GoogleMapComponent';
+import { AgentReasoningStream } from './AgentReasoningStream';
+import { ProposalComparison } from './ProposalComparison';
+import { SimulationHeatmaps } from './SimulationHeatmaps';
+import { ApprovalModal } from './ApprovalModal';
+import { ExecutionAnimation } from './ExecutionAnimation';
 import { useIncidentStream } from '../hooks/useIncidentStream';
 import { api } from '../api/client';
 
@@ -21,15 +26,13 @@ export const Dashboard: React.FC = () => {
       setIncidentId(res.incident_id);
     } catch (err) {
       console.warn("API Offline. Initializing local mock workflow instead.");
-      // Fallback local UUID to kick off hook's mock timer
-      setIncidentId(`mock_${Math.random().toString(36).substr(2, 9)}`);
+      setIncidentId(`mock_${Math.random().toString(36).substring(2, 11)}`);
     } finally {
       setLoading(false);
     }
   };
 
   const handleApproval = async (approved: boolean) => {
-    const act = approved ? 'approved' : 'denied';
     if (incidentId && !incidentId.startsWith('mock_')) {
       try {
         await api.approveIncident(incidentId, approved ? 'approved' : 'denied', "Operator cleared green waves.");
@@ -37,7 +40,6 @@ export const Dashboard: React.FC = () => {
         console.error("Failed to post approval state", err);
       }
     }
-    // Update local state directly
     setStatus(approved ? 'executing' : 'denied');
   };
 
@@ -67,94 +69,28 @@ export const Dashboard: React.FC = () => {
 
       {/* Main Grid Workspace */}
       <main className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1">
-        {/* Map Display & Proposals */}
+        {/* Map Display, Proposals & Heatmaps */}
         <section className="lg:col-span-2 flex flex-col gap-6">
           <GoogleMapComponent status={status} winner={decision?.winner || null} />
           
-          {/* Side-by-Side Proposal Cards */}
-          {decision && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Proposal A: Speed-First */}
-              <article className={`p-5 rounded-2xl border transition-all duration-300 ${
-                decision.winner === 'route_a_speed_first' 
-                  ? 'bg-slate-900/60 border-emerald-500/50 shadow-lg shadow-emerald-500/5' 
-                  : 'bg-slate-900/20 border-slate-850 opacity-40'
-              }`}>
-                <div className="flex justify-between items-center mb-3">
-                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest font-mono">Plan A (Speed-First)</h3>
-                  {decision.winner === 'route_a_speed_first' && (
-                    <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] px-2 py-0.5 rounded-full font-bold">WINNER</span>
-                  )}
-                </div>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-slate-500">Route Option:</span>
-                    <span className="text-white font-medium">Surface Streets</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-500">Ambulance ETA:</span>
-                    <span className="text-emerald-400 font-bold">8 minutes</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-500">Vehicles Impacted:</span>
-                    <span className="text-white">12 vehicles</span>
-                  </div>
-                </div>
-              </article>
+          <ProposalComparison 
+            proposalA={decision ? { recommended_route: 'Surface Streets', ambulance_eta: 8, vehicles_impacted: 12 } : null}
+            proposalB={decision ? { recommended_route: 'Highway 1', ambulance_eta: 11, vehicles_impacted: 3 } : null}
+            winner={decision?.winner || null}
+          />
 
-              {/* Proposal B: Fairness-First */}
-              <article className={`p-5 rounded-2xl border transition-all duration-300 ${
-                decision.winner === 'route_b_fairness_first' 
-                  ? 'bg-slate-900/60 border-emerald-500/50 shadow-lg shadow-emerald-500/5' 
-                  : 'bg-slate-900/20 border-slate-850 opacity-40'
-              }`}>
-                <div className="flex justify-between items-center mb-3">
-                  <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest font-mono">Plan B (Fairness-First)</h3>
-                  {decision.winner === 'route_b_fairness_first' && (
-                    <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[10px] px-2 py-0.5 rounded-full font-bold">WINNER</span>
-                  )}
-                </div>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-slate-500">Route Option:</span>
-                    <span className="text-white font-medium">Highway 1</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-500">Ambulance ETA:</span>
-                    <span className="text-emerald-400 font-bold">11 minutes</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-500">Vehicles Impacted:</span>
-                    <span className="text-white">3 vehicles</span>
-                  </div>
-                </div>
-              </article>
-            </div>
-          )}
+          <SimulationHeatmaps 
+            scoreA={decision ? 92 : null}
+            scoreB={decision ? 74 : null}
+          />
         </section>
 
-        {/* Live Reasoning Terminal Stream */}
+        {/* Live Reasoning Terminal Stream & Animation HUD */}
         <section className="flex flex-col gap-6">
-          <div className="flex-1 bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col gap-4 shadow-2xl">
-            <div className="flex justify-between items-center pb-3 border-b border-slate-800">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-widest font-mono">Pipeline Thought Stream</span>
-              {status === 'processing' && <span className="animate-pulse text-rose-500 text-[10px] font-bold">● LIVE</span>}
-            </div>
-            
-            <div className="flex-1 overflow-y-auto max-h-[380px] space-y-2.5 font-mono text-xs text-emerald-400 select-text">
-              {logs.length === 0 ? (
-                <div className="text-slate-600 italic">No incident active. Stream idle.</div>
-              ) : (
-                logs.map((log, idx) => (
-                  <div key={idx} className="flex gap-2 items-start leading-relaxed">
-                    <span className="text-slate-600">[{new Date(log.timestamp).toLocaleTimeString()}]</span>
-                    <span>{log.message}</span>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
+          <AgentReasoningStream logs={logs} status={status} />
           
+          <ExecutionAnimation status={status} winner={decision?.winner || null} />
+
           {/* Decision Explanation Display */}
           {decision && (
             <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3 shadow-2xl">
@@ -165,34 +101,12 @@ export const Dashboard: React.FC = () => {
         </section>
       </main>
 
-      {/* High-Impact Operator Approval Modal Overlay */}
-      {status === 'pending_approval' && (
-        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
-          <div className="bg-slate-900 border border-rose-500/40 rounded-3xl p-6 max-w-md w-full space-y-5 shadow-2xl shadow-rose-500/10">
-            <div className="flex items-center gap-3 text-rose-500">
-              <span className="text-2xl">⚠️</span>
-              <h3 className="text-md font-bold uppercase tracking-wider font-mono">Operator Approval Required</h3>
-            </div>
-            <p className="text-sm text-slate-300 leading-relaxed">
-              The winning plan (Plan A: Surface Streets) delays more than 10 vehicles. Please approve green wave sequence.
-            </p>
-            <div className="flex gap-4">
-              <button 
-                onClick={() => handleApproval(true)}
-                className="flex-1 py-3 bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white text-xs font-bold uppercase tracking-widest rounded-xl transition-all duration-300 font-mono"
-              >
-                Approve Plan
-              </button>
-              <button 
-                onClick={() => handleApproval(false)}
-                className="flex-1 py-3 bg-slate-800 hover:bg-slate-700 active:scale-95 text-slate-300 text-xs font-bold uppercase tracking-widest rounded-xl transition-all duration-300 font-mono"
-              >
-                Override
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* High-Impact Operator Approval Modal */}
+      <ApprovalModal 
+        show={status === 'pending_approval'} 
+        onApprove={() => handleApproval(true)} 
+        onOverride={() => handleApproval(false)} 
+      />
     </div>
   );
 };
