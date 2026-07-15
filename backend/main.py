@@ -90,13 +90,18 @@ async def execute_orchestration_pipeline(incident_id: str, req: IncidentCreateRe
     """
     Background worker that runs the multi-agent decision flow.
     Pushes live stream reasoning updates and writes outcome to DB.
+    
+    When CIVITAS_DEMO_MODE=true, uses pre-computed results from
+    demo_scenario_final.json instead of calling real LLM agents.
     """
+    import time as _time
+    
     try:
         # 1. Update status to processing
         db_client.update_incident(incident_id, {"status": "processing"})
         await manager.broadcast(incident_id, {"status": "processing", "log": "Orchestrator spawned pipeline workflow."})
         
-        # 2. Simulate progressive agent logs for live dashboard UX
+        # 2. Emit progressive agent logs for live dashboard UX
         logs = [
             "Perception Agent: Classifying incident severity...",
             "Perception Agent: Severity classified as CRITICAL. Priority Score: 0.95.",
@@ -111,43 +116,66 @@ async def execute_orchestration_pipeline(incident_id: str, req: IncidentCreateRe
         for log in logs:
             db_client.push_reasoning_log(incident_id, log)
             await manager.broadcast(incident_id, {"status": "processing", "log": log})
-            await asyncio.sleep(0.1)  # small yield to simulate live feed streaming
+            await asyncio.sleep(0.05)  # small yield to simulate live feed streaming
+        
+        # 3. Determine execution mode
+        demo_mode = os.environ.get("CIVITAS_DEMO_MODE", "").lower() == "true"
+        
+        if demo_mode:
+            # ── DEMO MODE: Use pre-computed results, no LLM calls ──
+            import json as _json
+            demo_path = os.path.join(base_dir, "data", "demo_scenario_final.json")
+            with open(demo_path, "r") as f:
+                demo = _json.load(f)
+            pre = demo["pre_computed_results"]
             
-        # 3. Instantiate and run real pipeline Orchestrator
-        orchestrator = OrchestratorAgent()
-        
-        # Sanitize location dict
-        loc = {"lat": req.location.lat, "lng": req.location.lng}
-        
-        incident_in = IncidentInput(
-            incident_type=req.incident_type,
-            description=req.description,
-            location=loc,
-            current_time="17:45",
-            base_eta_to_destination=22
-        )
-        
-        decision = await orchestrator.execute(incident_in)
-        
-        # Determine status based on approval requirements
-        status = "pending_approval" if decision.requires_approval else "executing"
-        
-        # 4. Save results to Database
-        import time
-        db_data = {
-            "status": status,
-            "decision": {
-                "winner": decision.winner,
-                "reasoning_one_liner": decision.reasoning_summary,
-                "requires_approval": decision.requires_approval,
-                "decision_time_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ")
+            # Write all agent outputs to DB
+            db_client.update_incident(incident_id, {
+                "perception": {"incident_type": "medical_emergency", "severity": "critical", "priority_score": 0.95},
+                "route_a_proposal": pre["route_a_proposal"],
+                "route_b_proposal": pre["route_b_proposal"],
+                "negotiation_result": pre["negotiation_result"],
+                "explainability": pre["explainability"],
+            })
+            
+            status = "pending_approval"
+            db_data = {
+                "status": status,
+                "decision": {
+                    "winner": pre["negotiation_result"]["winner"],
+                    "reasoning_one_liner": pre["explainability"]["reasoning_one_liner"],
+                    "requires_approval": True,
+                    "decision_time_utc": _time.strftime("%Y-%m-%dT%H:%M:%SZ")
+                }
             }
-        }
+        else:
+            # ── LIVE MODE: Run real multi-agent orchestrator pipeline ──
+            orchestrator = OrchestratorAgent()
+            loc = {"lat": req.location.lat, "lng": req.location.lng}
+            incident_in = IncidentInput(
+                incident_type=req.incident_type,
+                description=req.description,
+                location=loc,
+                current_time="17:45",
+                base_eta_to_destination=22
+            )
+            decision = await orchestrator.execute(incident_in)
+            status = "pending_approval" if decision.requires_approval else "executing"
+            db_data = {
+                "status": status,
+                "decision": {
+                    "winner": decision.winner,
+                    "reasoning_one_liner": decision.reasoning_summary,
+                    "requires_approval": decision.requires_approval,
+                    "decision_time_utc": _time.strftime("%Y-%m-%dT%H:%M:%SZ")
+                }
+            }
 
-        
+        # 4. Save results to Database
         db_client.update_incident(incident_id, db_data)
         
-        final_log = f"Pipeline execution complete. Decided: Route via {decision.winner.replace('_', ' ').title()}. Status: {status}."
+        winner_label = db_data["decision"]["winner"].replace("_", " ").title()
+        final_log = f"Pipeline execution complete. Decided: Route via {winner_label}. Status: {status}."
         db_client.push_reasoning_log(incident_id, final_log)
         await manager.broadcast(incident_id, {"status": status, "log": final_log, "decision": db_data["decision"]})
         
