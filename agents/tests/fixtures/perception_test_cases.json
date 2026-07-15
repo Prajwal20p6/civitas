@@ -1,0 +1,32 @@
+[
+  {
+    "description": "Ambulance dispatch for cardiac arrest patient near 5th Ave and Main St.",
+    "expected_type": "medical_emergency",
+    "expected_severity": "critical",
+    "expected_priority": 0.95
+  },
+  {
+    "description": "Multi-car collision causing major lane blockages on Broadway.",
+    "expected_type": "accident",
+    "expected_severity": "major",
+    "expected_priority": 0.70
+  },
+  {
+    "description": "Debris in the middle of the road causing minor congestion.",
+    "expected_type": "hazard",
+    "expected_severity": "minor",
+    "expected_priority": 0.40
+  },
+  {
+    "description": "Elderly stroke patient dispatch requested at Westridge Dr.",
+    "expected_type": "medical_emergency",
+    "expected_severity": "critical",
+    "expected_priority": 0.95
+  },
+  {
+    "description": "Flooding at the intersection of Elm and 12th.",
+    "expected_type": "hazard",
+    "expected_severity": "minor",
+    "expected_priority": 0.40
+  }
+]

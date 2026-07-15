@@ -17,3 +17,9 @@ service-account-key.json
 
 # Media & Backups
 demo_backup.mp4
+
+# Python test caches and coverage
+.coverage
+.pytest_cache/
+htmlcov/
+
