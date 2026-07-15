@@ -1,0 +1,82 @@
+[
+  {
+    "id": "scenario_001",
+    "incident_type": "emergency_911",
+    "description": "Ambulance dispatch for cardiac arrest patient near 5th Avenue and Main Street. Heavy traffic reported.",
+    "location": {
+      "lat": 37.4219,
+      "lng": -122.0840
+    },
+    "destination": {
+      "name": "County General Hospital",
+      "lat": 37.4280,
+      "lng": -122.0910
+    },
+    "current_time": "2026-07-15T09:30:00Z",
+    "base_eta_to_destination": 22
+  },
+  {
+    "id": "scenario_002",
+    "incident_type": "traffic_sensor",
+    "description": "Multi-car collision on Broadway Arterial. Lane blocked, traffic backup building. High safety risk.",
+    "location": {
+      "lat": 37.4230,
+      "lng": -122.0810
+    },
+    "destination": {
+      "name": "Mercy Urgent Care",
+      "lat": 37.4190,
+      "lng": -122.0950
+    },
+    "current_time": "2026-07-15T09:35:00Z",
+    "base_eta_to_destination": 18
+  },
+  {
+    "id": "scenario_003",
+    "incident_type": "manual_report",
+    "description": "Construction debris falling onto lane 2 of Highway 101 Northbound. Vehicles swerving, minor congestion.",
+    "location": {
+      "lat": 37.4255,
+      "lng": -122.0875
+    },
+    "destination": {
+      "name": "Valley Hospital",
+      "lat": 37.4320,
+      "lng": -122.0780
+    },
+    "current_time": "2026-07-15T09:40:00Z",
+    "base_eta_to_destination": 14
+  },
+  {
+    "id": "scenario_004",
+    "incident_type": "emergency_911",
+    "description": "Elderly patient showing stroke symptoms at 1220 Westridge Dr. High priority dispatch requested.",
+    "location": {
+      "lat": 37.4110,
+      "lng": -122.0980
+    },
+    "destination": {
+      "name": "County General Hospital",
+      "lat": 37.4280,
+      "lng": -122.0910
+    },
+    "current_time": "2026-07-15T09:45:00Z",
+    "base_eta_to_destination": 25
+  },
+  {
+    "id": "scenario_005",
+    "incident_type": "traffic_sensor",
+    "description": "Local water main break causing intersection flooding at Elm and 12th. Avoid route segment completely.",
+    "location": {
+      "lat": 37.4290,
+      "lng": -122.0890
+    },
+    "destination": {
+      "name": "County General Hospital",
+      "lat": 37.4280,
+      "lng": -122.0910
+    },
+    "current_time": "2026-07-15T09:50:00Z",
+    "base_eta_to_destination": 12
+  }
+]
