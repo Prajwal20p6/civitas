@@ -4,9 +4,9 @@ import json
 import sys
 from unittest.mock import MagicMock, patch
 
-# Mock google.generativeai module for import resilience in testing
-mock_genai = MagicMock()
-sys.modules["google.generativeai"] = mock_genai
+# Retrieve the global mock from conftest
+mock_genai = sys.modules["google.generativeai"]
+
 
 # Now import schemas and perception
 from src.schemas import IncidentInput
