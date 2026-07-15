@@ -35,19 +35,24 @@ class OrchestratorAgent(SequentialAgent):
         classification = await self.perception.execute(incident)
         self.state.write("perception_output", classification.model_dump())
         
-        # Step 2: Generate Proposals from Route Agents A & B
+        # Step 2: Generate Proposals from Route Agents A & B (ParallelAgent execution)
         route_input = RouteAgentInput(
             incident_location=incident.location,
             destination={"lat": 37.4280, "lng": -122.0910},
             current_traffic_conditions={"Surface Streets": "heavy", "Highway 1": "moderate"},
             objectives={"priority": "optimize_eta"}
         )
+        print("[Orchestrator] Spawning Route Agents A & B in parallel...")
+        import asyncio
+        task_a = asyncio.create_task(self.route_a.execute(route_input))
+        task_b = asyncio.create_task(self.route_b.execute(route_input))
         
-        proposal_a = await self.route_a.execute(route_input)
-        proposal_b = await self.route_b.execute(route_input)
+        proposal_a, proposal_b = await asyncio.gather(task_a, task_b)
         
         self.state.write("route_a_proposal", proposal_a.model_dump())
         self.state.write("route_b_proposal", proposal_b.model_dump())
+
+
         
         # Step 3: Run Simulation and Resolution
         sim_input = SimulationInput(

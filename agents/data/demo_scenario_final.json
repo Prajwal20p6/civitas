@@ -1,0 +1,71 @@
+{
+  "incident_id": "DEMO_001",
+  "incident_type": "medical_emergency",
+  "description": "Cardiac patient dispatch from residential area to County Hospital",
+  "location": {
+    "lat": 37.421,
+    "lng": -122.084,
+    "area_name": "Palo Alto, CA - University Ave & El Camino Real"
+  },
+  "destination": {
+    "name": "County Hospital",
+    "lat": 37.438,
+    "lng": -122.143
+  },
+  "baseline_eta_minutes": 22,
+  "traffic_conditions": {
+    "Highway_1": "heavy",
+    "Surface_Streets": "moderate",
+    "side_streets": "light"
+  },
+  "current_time": "17:45",
+  "pre_computed_results": {
+    "route_a_proposal": {
+      "agent_id": "route_a_speed_first",
+      "recommended_route": "Surface Streets",
+      "ambulance_eta": 8,
+      "vehicles_impacted": 12,
+      "avg_delay_per_vehicle": 2,
+      "safety_score": 0.9,
+      "reasoning": "Surface Streets is shortest path, saves 3 minutes despite routing through residential.",
+      "confidence": 0.92
+    },
+    "route_b_proposal": {
+      "agent_id": "route_b_fairness_first",
+      "recommended_route": "Highway 1",
+      "ambulance_eta": 11,
+      "vehicles_impacted": 3,
+      "avg_delay_per_vehicle": 4,
+      "safety_score": 0.8,
+      "reasoning": "Highway 1 has fewer intersections, minimizes collateral impact despite longer route.",
+      "confidence": 0.87
+    },
+    "negotiation_result": {
+      "winner": "route_a_speed_first",
+      "score_a": 92.0,
+      "score_b": 74.0,
+      "margin": 18.0,
+      "reasoning": "Agent A achieves primary goal (minimizing ambulance ETA) with acceptable collateral impact.",
+      "heatmap_a_url": "file:///mock_a.png",
+      "heatmap_b_url": "file:///mock_b.png",
+      "counterfactual": {
+        "baseline_eta_no_intervention": 22,
+        "planned_eta_with_intervention": 8,
+        "time_saved": 14
+      }
+    },
+    "explainability": {
+      "decision": "Route ambulance via Surface Streets",
+      "reasoning_one_liner": "Surface Streets route saves ambulance 3 minutes, impacts 12 vehicles for 2 minutes average. Meets emergency-response thresholds.",
+      "counterfactual": "Without intervention: 22 min ETA. With this plan: 8 min ETA. Saves 14 minutes.",
+      "confidence": 0.92,
+      "approval_required": true
+    }
+  },
+  "expected_outputs": {
+    "total_time_seconds": 6.5,
+    "ambulance_arrives_at_seconds": 480,
+    "final_approval_status": "approved",
+    "success_message": "Ambulance routed successfully. Arrival time: 7:42 (3:18 faster than baseline)"
+  }
+}
