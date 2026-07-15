@@ -8,16 +8,17 @@ This is the task tracking checklist for the 4-week build cycle. Use this documen
 - [x] Create project directory structure & initialize git repository
 - [x] Configure `.gitignore` with ignore patterns
 - [x] Create core documentation files (`MASTER.md`, `PROJECT_RULES.md`, `DEVELOPMENT_PLAN.md`, etc.)
-- [ ] Initialize ADK project environment & configure dependency files (`pyproject.toml`)
-- [ ] Implement **Perception Agent** class for incident parsing (Gemini Flash)
-- [ ] Implement **Route Agent A** class for speed-first proposals (Gemini Flash)
-- [ ] Implement **Route Agent B** class for fairness-first proposals (Gemini Flash)
-- [ ] Implement **Google Maps API Integration** helper script
-- [ ] Build **Simulation Engine** road network grid code (`traffic_model.py`)
-- [ ] Implement deterministic resolver and scoring equation (`resolver.py`)
-- [ ] Implement **Explainability Agent** class (Gemini Flash)
-- [ ] Write CLI execution test runner script (`cli.py`)
-- [ ] Write agent basic unit tests
+- [x] Initialize ADK project environment & configure dependency files (`pyproject.toml`)
+- [x] Implement **Perception Agent** class for incident parsing (Gemini Flash)
+- [x] Implement **Route Agent A** class for speed-first proposals (Gemini Flash)
+- [x] Implement **Route Agent B** class for fairness-first proposals (Gemini Flash)
+- [x] Implement **Google Maps API Integration** helper script
+- [x] Build **Simulation Engine** road network grid code (`traffic_model.py`)
+- [x] Implement deterministic resolver and scoring equation (`resolver.py`)
+- [x] Implement **Explainability Agent** class (Gemini Flash)
+- [x] Write CLI execution test runner script (`cli.py`)
+- [x] Write agent basic unit tests
+
 
 ---
 

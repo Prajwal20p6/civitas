@@ -8,16 +8,16 @@ This document outlines the current state, progress, confidence metrics, and acti
 
 | Metric | Value |
 |---|---|
-| **Current Phase** | Phase 1: Setup & Initialization |
-| **Current Target Week** | Week 1: Core Agents |
-| **System Confidence Score** | **10.0/10.0** (Structured specification created, ready for agent development) |
+| **Current Phase** | Phase 2: Simulation & Integration |
+| **Current Target Week** | Week 2: Integration & Backend Gateway |
+| **System Confidence Score** | **10.0/10.0** (Week 1 core agents fully implemented, tested, and passing) |
 | **Overall Status** | 🟢 ON TRACK |
 
 ---
 
 ## 2. Active Focus & Blockers
 
-- **Current Focus**: Initializing the ADK project environment and implementing the Perception Agent parser.
+- **Current Focus**: Setting up the FastAPI backend endpoints, Firebase client integrations, and human approval node logic.
 - **Active Blockers**: None.
 - **Identified Risks**:
   - *LLM Latency*: Vertex AI Gemini 2.5 API response latency during live demo. Mitigation: Implement pre-seeded deterministic fallback logic.
@@ -28,11 +28,12 @@ This document outlines the current state, progress, confidence metrics, and acti
 
 ### A. Agents (`/agents`)
 - [x] Folder structure & `.gitkeep` placeholders
-- [ ] Perception Agent classification code
-- [ ] Route Agent A (Speed-First) routing logic
-- [ ] Route Agent B (Fairness-First) routing logic
-- [ ] Simulation Agent grid logic
-- [ ] Explainability Agent summaries
+- [x] Perception Agent classification code
+- [x] Route Agent A (Speed-First) routing logic
+- [x] Route Agent B (Fairness-First) routing logic
+- [x] Simulation Agent grid logic
+- [x] Explainability Agent summaries
+
 
 ### B. Backend Gateways (`/backend`)
 - [x] Directory initialization
