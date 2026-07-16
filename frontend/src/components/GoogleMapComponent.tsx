@@ -91,19 +91,41 @@ export const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
 
   useEffect(() => {
     if (status !== 'executing') {
-      setAmbulancePos(activePath[0]);
+      if (status === 'success' || status === 'completed') {
+        setAmbulancePos(activePath[activePath.length - 1]);
+      } else {
+        setAmbulancePos(activePath[0]);
+      }
       return;
     }
 
-    let index = 0;
+    const durationMs = 15000; // 15 seconds matching progress countdown
+    const intervalMs = 100;   // 100ms interval for smooth 10fps updates
+    const steps = durationMs / intervalMs;
+    let step = 0;
+
     const interval = setInterval(() => {
-      index += 1;
-      if (index < activePath.length) {
-        setAmbulancePos(activePath[index]);
-      } else {
+      step += 1;
+      const progress = Math.min(step / steps, 1);
+      
+      // Interpolate along activePath
+      const pathLength = activePath.length;
+      const exactIndex = progress * (pathLength - 1);
+      const segmentIndex = Math.min(Math.floor(exactIndex), pathLength - 2);
+      const factor = exactIndex - segmentIndex;
+
+      const startNode = activePath[segmentIndex];
+      const endNode = activePath[segmentIndex + 1];
+
+      const currentLat = startNode.lat + factor * (endNode.lat - startNode.lat);
+      const currentLng = startNode.lng + factor * (endNode.lng - startNode.lng);
+
+      setAmbulancePos({ lat: currentLat, lng: currentLng });
+
+      if (progress >= 1) {
         clearInterval(interval);
       }
-    }, 1000);
+    }, intervalMs);
 
     return () => clearInterval(interval);
   }, [status, winner]);
@@ -201,15 +223,25 @@ export const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
           }}
         />
 
-        {/* Glowing Green Wave corridor when executing */}
-        {status === 'executing' && (
+        {/* Route Path (solid blue line) and Preemption Animation */}
+        {(status === 'executing' || status === 'success' || status === 'completed') && (
           <>
             <PolylineF
               path={activePath}
               options={{
-                strokeColor: '#10b981',
-                strokeOpacity: 0.8,
-                strokeWeight: 6,
+                strokeColor: '#2563eb', // solid blue line
+                strokeOpacity: 0.9,
+                strokeWeight: 5,
+                geodesic: true,
+              }}
+            />
+            {/* Blinking green waves along polyline corridor */}
+            <PolylineF
+              path={activePath}
+              options={{
+                strokeColor: '#10b981', // green wave highlight
+                strokeOpacity: 0.4,
+                strokeWeight: 10,
                 geodesic: true,
               }}
             />
@@ -220,15 +252,31 @@ export const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
               options={{
                 icon: {
                   path: window.google?.maps?.SymbolPath?.CIRCLE ?? 0,
-                  fillColor: '#ffffff',
+                  fillColor: '#ef4444', // Red center
                   fillOpacity: 1,
                   strokeWeight: 3,
-                  strokeColor: '#ef4444',
-                  scale: 7,
+                  strokeColor: '#3b82f6', // Blue flashing border
+                  scale: 8,
                 }
               }}
             />
           </>
+        )}
+
+        {/* Success checkmark marker at destination */}
+        {(status === 'success' || status === 'completed') && (
+          <MarkerF
+            position={{ lat: 34.0722, lng: -118.2637 }}
+            title="Success Checkmark"
+            options={{
+              icon: {
+                path: 'M -3,0 L -1,2 L 3,-2',
+                strokeColor: '#10b981',
+                strokeWeight: 4,
+                scale: 3,
+              }
+            }}
+          />
         )}
       </GoogleMap>
 

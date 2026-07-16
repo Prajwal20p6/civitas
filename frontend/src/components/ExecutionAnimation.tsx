@@ -22,7 +22,7 @@ export const ExecutionAnimation: React.FC<ExecutionAnimationProps> = ({ status: 
   const [countdown, setCountdown] = useState(15);
 
   useEffect(() => {
-    if (status === 'success') {
+    if (status === 'success' || status === 'completed') {
       setProgress(100);
       setCountdown(0);
       return;
@@ -47,7 +47,7 @@ export const ExecutionAnimation: React.FC<ExecutionAnimationProps> = ({ status: 
     return () => clearInterval(interval);
   }, [status]);
 
-  if (status !== 'executing' && status !== 'success') return null;
+  if (status !== 'executing' && status !== 'success' && status !== 'completed') return null;
 
   return (
     <div className="space-y-6">
