@@ -15,7 +15,9 @@ import pytest
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Load pre-computed demo scenario for deterministic assertions
-_scenario_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data", "demo_scenario_final.json")
+_scenario_path = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "..", "data", "demo_scenario_final.json"
+)
 with open(_scenario_path, "r") as f:
     _demo_scenario = json.load(f)
 
@@ -57,18 +59,24 @@ def test_full_integration_e2e_flow():
     create_res = client.post("/api/v1/incidents", json=payload)
     total_duration_ms = (time.perf_counter() - start_time) * 1000
 
-    assert create_res.status_code == 201, f"Expected 201, got {create_res.status_code}: {create_res.text}"
+    assert (
+        create_res.status_code == 201
+    ), f"Expected 201, got {create_res.status_code}: {create_res.text}"
     create_data = create_res.json()
     incident_id = create_data["incident_id"]
     assert incident_id is not None
     assert create_data["status"] == "processing"
 
     # In demo mode with mock pipeline, entire request should finish in <10s
-    assert total_duration_ms < 10_000, f"E2E pipeline exceeded 10s: {total_duration_ms:.0f}ms"
+    assert (
+        total_duration_ms < 10_000
+    ), f"E2E pipeline exceeded 10s: {total_duration_ms:.0f}ms"
 
     # ── Step 2: Connect to WebSocket & verify reasoning logs ──
     logs_received = []
-    with client.websocket_connect(f"/api/v1/incidents/{incident_id}/stream") as websocket:
+    with client.websocket_connect(
+        f"/api/v1/incidents/{incident_id}/stream"
+    ) as websocket:
         # Since BackgroundTasks run synchronously in FastAPI TestClient, all logs are
         # already processed and written. They will be sent immediately as history.
         # We read the 9 expected log entries (8 progressive + 1 final pipeline log).
@@ -86,7 +94,9 @@ def test_full_integration_e2e_flow():
     assert "Route Agent A" in joined, f"Missing Route Agent A logs. Got: {joined}"
     assert "Route Agent B" in joined, f"Missing Route Agent B logs. Got: {joined}"
     assert "Simulation Agent" in joined, f"Missing Simulation Agent logs. Got: {joined}"
-    assert "Explainability Agent" in joined, f"Missing Explainability Agent logs. Got: {joined}"
+    assert (
+        "Explainability Agent" in joined
+    ), f"Missing Explainability Agent logs. Got: {joined}"
     assert "Orchestrator" in joined, f"Missing Orchestrator logs. Got: {joined}"
 
     # ── Step 4: Verify Firestore state populated ──
@@ -108,11 +118,14 @@ def test_full_integration_e2e_flow():
     assert state["negotiation_result"]["winner"] == "route_a_speed_first"
 
     # ── Step 5: Simulate operator approval ──
-    approve_res = client.post(f"/api/v1/approval/{incident_id}", json={
-        "incident_id": incident_id,
-        "status": "approved",
-        "reason": "Operator clears green wave preemption corridor.",
-    })
+    approve_res = client.post(
+        f"/api/v1/approval/{incident_id}",
+        json={
+            "incident_id": incident_id,
+            "status": "approved",
+            "reason": "Operator clears green wave preemption corridor.",
+        },
+    )
     assert approve_res.status_code == 200
     assert approve_res.json()["status"] == "approved"
 

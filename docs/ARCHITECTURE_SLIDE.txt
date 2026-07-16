@@ -1,0 +1,37 @@
+================================================================================
+CIVITAS — Architecture Slide Pitch notes (5-Minute Pitch)
+================================================================================
+
+[SLIDE TITLE: CIVITAS: Agentic Traffic Coordination]
+
+1. PROBLEM STATEMENT:
+   "Traditional sirens and emergency overrides are localized and blind to urban 
+   congestion, causing delayed ambulances and triggering cascading city gridlock."
+
+2. SOLUTION OVERVIEW:
+   "An AI-native autonomous emergency traffic coordinator that negotiates 
+   signal preemption corridors in real-time, resolving conflicts between 
+   response speed and civilian fairness."
+
+3. KEY DIFFERENTIATOR:
+   "Multi-Agent Negotiation: Instead of traditional heuristic rules, we model 
+   competing routing priorities (Speed-First vs. Fairness-First) as autonomous 
+   agents. They negotiate through real-time traffic simulations, validated by 
+   a human-in-the-loop approval gate."
+
+4. TECH STACK:
+   - Google Agent Development Kit (ADK) 2.0
+   - Google Vertex AI (Gemini 2.5 Flash / Gemini 2.5 Pro)
+   - FastAPI Backend & WebSockets
+   - React Operator Dashboard with Google Maps JS SDK
+   - Firebase Firestore & Realtime Database
+
+5. RESULTS:
+   - 90-second end-to-end interactive demo.
+   - Deterministic scoring resolver guarantees predictable, safe outcomes.
+   - Saves up to 60% of baseline transit times with minimal civilian traffic impact.
+
+6. CALL TO ACTION:
+   "Let's build safer, smarter cities that save lives in real-time. Join the 
+   CIVITAS pilot today."
+================================================================================

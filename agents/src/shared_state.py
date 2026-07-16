@@ -12,6 +12,7 @@ from pydantic import BaseModel
 
 class IncidentState(BaseModel):
     """Shared state across all agents for a single incident."""
+
     incident_id: str
     perception_output: Optional[Dict[str, Any]] = None
     route_a_proposal: Optional[Dict[str, Any]] = None
@@ -24,27 +25,27 @@ class IncidentState(BaseModel):
 
 class SessionStateManager:
     """Manage shared session state for a single incident (backed by Firestore in production)."""
-    
+
     def __init__(self, incident_id: str):
         self.incident_id = incident_id
         self.state = IncidentState(incident_id=incident_id)
         self._lock = threading.Lock()
-    
+
     def read(self, key: str) -> Any:
         """Read a value from shared state."""
         with self._lock:
             return getattr(self.state, key, None)
-    
+
     def write(self, key: str, value: Any):
         """Write a value to shared state."""
         with self._lock:
             setattr(self.state, key, value)
-    
+
     def snapshot(self) -> Dict[str, Any]:
         """Return a serializable snapshot of the current state."""
         with self._lock:
             return self.state.model_dump()
-    
+
     def export_to_firestore(self):
         """Persist state to Firestore (placeholder for production wiring)."""
         pass
@@ -59,14 +60,14 @@ _registry_lock = threading.Lock()
 def get_session_state(incident_id: str = "default") -> SessionStateManager:
     """
     Get or create a SessionStateManager for the given incident_id.
-    
+
     Thread-safe: multiple concurrent pipelines can each have their own
     isolated state without collision.
-    
+
     Args:
         incident_id: Unique incident identifier. Defaults to 'default' for
                       backwards compatibility with single-incident CLI usage.
-    
+
     Returns:
         SessionStateManager instance scoped to the given incident.
     """
