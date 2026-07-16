@@ -22,6 +22,11 @@ export const ExecutionAnimation: React.FC<ExecutionAnimationProps> = ({ status: 
   const [countdown, setCountdown] = useState(15);
 
   useEffect(() => {
+    if (status === 'success') {
+      setProgress(100);
+      setCountdown(0);
+      return;
+    }
     if (status !== 'executing') {
       setProgress(0);
       setCountdown(15);
@@ -42,34 +47,34 @@ export const ExecutionAnimation: React.FC<ExecutionAnimationProps> = ({ status: 
     return () => clearInterval(interval);
   }, [status]);
 
-  if (status !== 'executing') return null;
+  if (status !== 'executing' && status !== 'success') return null;
 
   return (
     <div className="space-y-6">
       {/* Map display rendering preemption path animation */}
       <GoogleMapComponent status={status} winner={winner} />
 
-      <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-4 shadow-2xl animate-pulse">
+      <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-4 shadow-sm animate-pulse">
         <div className="flex justify-between items-center">
-          <span className="text-xs font-bold text-emerald-400 uppercase tracking-widest font-mono">Emergency Corridor Active</span>
-          <span className="text-xs font-mono text-slate-400">ETA Countdown: <strong className="text-white">{countdown.toFixed(1)}s</strong></span>
+          <span className="text-xs font-bold text-blue-600 uppercase tracking-widest font-mono">Emergency Corridor Active</span>
+          <span className="text-xs font-mono text-slate-500">ETA Countdown: <strong className="text-slate-800">{countdown.toFixed(1)}s</strong></span>
         </div>
 
         {/* Progress Bar */}
-        <div className="w-full bg-slate-950 h-3 rounded-full overflow-hidden border border-slate-800">
+        <div className="w-full bg-slate-200 h-3 rounded-full overflow-hidden border border-slate-300">
           <div 
-            className="bg-emerald-500 h-full transition-all duration-300 shadow-[0_0_12px_#10b981]" 
+            className="bg-blue-600 h-full transition-all duration-300 shadow-sm" 
             style={{ width: `${progress}%` }} 
           />
         </div>
 
-        <div className="text-[11px] font-mono text-slate-400 space-y-1">
-          <div>Preemption Route: <span className="text-white">{winner === 'route_a_speed_first' ? 'Surface Streets' : 'Highway 1'}</span></div>
+        <div className="text-[11px] font-mono text-slate-600 space-y-1">
+          <div>Preemption Route: <span className="text-slate-800 font-semibold">{winner === 'route_a_speed_first' ? 'Surface Streets' : 'Highway 1'}</span></div>
           <div className="flex gap-2">
             <span>Signal status:</span>
-            <span className="text-emerald-400">INT_01 [GREEN WAVE]</span>
-            <span className="text-emerald-400">INT_02 [GREEN WAVE]</span>
-            <span className="text-emerald-400">INT_03 [GREEN WAVE]</span>
+            <span className="text-emerald-600 font-bold">INT_01 [GREEN WAVE]</span>
+            <span className="text-emerald-600 font-bold">INT_02 [GREEN WAVE]</span>
+            <span className="text-emerald-600 font-bold">INT_03 [GREEN WAVE]</span>
           </div>
         </div>
       </div>

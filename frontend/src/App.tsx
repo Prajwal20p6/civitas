@@ -20,10 +20,10 @@ const IncidentLayout: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 p-6 flex flex-col gap-6 font-sans">
+    <div className="min-h-screen bg-white text-slate-800 p-6 flex flex-col gap-6 font-sans">
       {/* Success Banner */}
       {status === 'success' && (
-        <div className="bg-emerald-500/20 border border-emerald-500 text-emerald-400 p-4 rounded-2xl flex items-center justify-between animate-fade-in font-mono text-sm shadow-[0_0_20px_rgba(16,185,129,0.1)]">
+        <div className="bg-blue-600 text-white p-4 rounded-2xl flex items-center justify-between animate-fade-in font-mono text-sm shadow-md">
           <div className="flex items-center gap-2">
             <span>🎉</span>
             <span><strong>Preemption Success:</strong> Ambulance has arrived safely at destination. Emergency green wave corridor cleared.</span>
@@ -33,7 +33,7 @@ const IncidentLayout: React.FC = () => {
             onClick={() => {
               localStorage.removeItem(`civitas_demo_start_${id}`);
             }}
-            className="px-3 py-1 bg-emerald-600/90 hover:bg-emerald-500 text-white rounded-lg transition text-xs font-semibold font-sans hover:scale-105"
+            className="px-3 py-1 bg-white hover:bg-slate-100 text-blue-600 rounded-lg transition text-xs font-semibold font-sans hover:scale-105"
           >
             New Scenario
           </Link>
@@ -41,23 +41,23 @@ const IncidentLayout: React.FC = () => {
       )}
 
       {/* Top Banner Navigation */}
-      <header className="flex justify-between items-center border-b border-slate-900 pb-4">
+      <header className="flex justify-between items-center border-b border-slate-200 pb-4">
         <div className="flex items-center gap-3">
-          <span className="w-4 h-4 bg-rose-500 rounded-full animate-pulse shadow-[0_0_12px_rgba(244,63,94,0.6)]" />
-          <Link to="/" className="text-xl font-bold tracking-wider uppercase text-white font-mono hover:text-rose-400 transition-colors">
+          <span className="w-4 h-4 bg-blue-600 rounded-full animate-pulse shadow-[0_0_12px_rgba(25,118,210,0.6)]" />
+          <Link to="/" className="text-xl font-bold tracking-wider uppercase text-slate-800 font-mono hover:text-blue-600 transition-colors">
             CIVITAS Traffic Coordinator
           </Link>
         </div>
-        <div className="bg-slate-900 border border-slate-800 rounded-lg px-3 py-1 font-mono text-xs text-slate-400">
-          Session: <span className="text-rose-400 font-bold">{id}</span>
+        <div className="bg-slate-100 border border-slate-200 rounded-lg px-3 py-1 font-mono text-xs text-slate-600">
+          Session: <span className="text-blue-600 font-bold">{id}</span>
         </div>
       </header>
 
       {/* Route Navigation Tabs */}
-      <nav className="flex flex-wrap gap-2 border-b border-slate-900 pb-4">
+      <nav className="flex flex-wrap gap-2 border-b border-slate-200 pb-4">
         <Link 
           to="/"
-          className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-xs font-semibold rounded-xl transition duration-200 border border-slate-805 text-slate-400"
+          className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-xs font-semibold rounded-xl transition duration-200 border border-slate-200 text-slate-600"
         >
           🗺️ Dashboard
         </Link>
@@ -65,8 +65,8 @@ const IncidentLayout: React.FC = () => {
           to={`/incident/${id}`}
           className={`px-4 py-2 text-xs font-semibold rounded-xl transition duration-200 border ${
             isTabActive(`/incident/${id}`) 
-              ? 'bg-rose-605 text-white border-rose-500 bg-rose-600 shadow-[0_4px_12px_rgba(225,29,72,0.25)]' 
-              : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border-slate-800'
+              ? 'bg-blue-600 text-white border-blue-600 shadow-[0_2px_8px_rgba(25,118,210,0.15)]' 
+              : 'bg-slate-100 hover:bg-slate-200 text-slate-600 border-slate-200'
           }`}
         >
           🤖 Thought Stream
@@ -75,8 +75,8 @@ const IncidentLayout: React.FC = () => {
           to={`/incident/${id}/comparison`}
           className={`px-4 py-2 text-xs font-semibold rounded-xl transition duration-200 border ${
             isTabActive(`/incident/${id}/comparison`) 
-              ? 'bg-rose-605 text-white border-rose-500 bg-rose-600 shadow-[0_4px_12px_rgba(225,29,72,0.25)]' 
-              : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border-slate-800'
+              ? 'bg-blue-600 text-white border-blue-600 shadow-[0_2px_8px_rgba(25,118,210,0.15)]' 
+              : 'bg-slate-100 hover:bg-slate-200 text-slate-600 border-slate-200'
           }`}
         >
           ⚖️ Comparisons
@@ -85,8 +85,8 @@ const IncidentLayout: React.FC = () => {
           to={`/incident/${id}/heatmaps`}
           className={`px-4 py-2 text-xs font-semibold rounded-xl transition duration-200 border ${
             isTabActive(`/incident/${id}/heatmaps`) 
-              ? 'bg-rose-650 text-white border-rose-500 bg-rose-600 shadow-[0_4px_12px_rgba(225,29,72,0.25)]' 
-              : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border-slate-800'
+              ? 'bg-blue-600 text-white border-blue-600 shadow-[0_2px_8px_rgba(25,118,210,0.15)]' 
+              : 'bg-slate-100 hover:bg-slate-200 text-slate-600 border-slate-200'
           }`}
         >
           🔥 Heatmaps
@@ -95,8 +95,8 @@ const IncidentLayout: React.FC = () => {
           to={`/incident/${id}/approval`}
           className={`px-4 py-2 text-xs font-semibold rounded-xl transition duration-200 border ${
             isTabActive(`/incident/${id}/approval`) 
-              ? 'bg-rose-650 text-white border-rose-500 bg-rose-600 shadow-[0_4px_12px_rgba(225,29,72,0.25)]' 
-              : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border-slate-800'
+              ? 'bg-blue-600 text-white border-blue-600 shadow-[0_2px_8px_rgba(25,118,210,0.15)]' 
+              : 'bg-slate-100 hover:bg-slate-200 text-slate-600 border-slate-200'
           }`}
         >
           ⚠️ Operator Approval
@@ -105,8 +105,8 @@ const IncidentLayout: React.FC = () => {
           to={`/incident/${id}/execution`}
           className={`px-4 py-2 text-xs font-semibold rounded-xl transition duration-200 border ${
             isTabActive(`/incident/${id}/execution`) 
-              ? 'bg-rose-650 text-white border-rose-500 bg-rose-600 shadow-[0_4px_12px_rgba(225,29,72,0.25)]' 
-              : 'bg-slate-900 hover:bg-slate-800 text-slate-300 border-slate-800'
+              ? 'bg-blue-600 text-white border-blue-600 shadow-[0_2px_8px_rgba(25,118,210,0.15)]' 
+              : 'bg-slate-100 hover:bg-slate-200 text-slate-600 border-slate-200'
           }`}
         >
           ⚡ Preemption Active
@@ -114,7 +114,7 @@ const IncidentLayout: React.FC = () => {
       </nav>
 
       {/* Main Area Area */}
-      <div className="flex-1 bg-slate-900/40 border border-slate-900 rounded-3xl p-6 shadow-2xl min-h-[400px]">
+      <div className="flex-1 bg-white border border-slate-100 rounded-3xl p-6 shadow-md min-h-[400px]">
         <Routes>
           <Route path="/" element={<AgentReasoningStream />} />
           <Route path="comparison" element={<ProposalComparison />} />

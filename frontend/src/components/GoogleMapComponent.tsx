@@ -77,13 +77,13 @@ export const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
   // Fallback view if Maps API fails, is loading, or inside test environment
   if (!isLoaded || loadError) {
     return (
-      <div className="relative w-full h-[500px] bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden shadow-2xl flex items-center justify-center text-slate-400 font-mono text-xs">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-30" />
+      <div className="relative w-full h-[500px] bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden shadow-sm flex items-center justify-center text-slate-600 font-mono text-xs">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-40" />
         <div className="z-10 text-center space-y-2">
-          <div>🗺️ Google Maps Loading (LA Grid fallback active)</div>
+          <div className="text-slate-805 text-slate-800 font-bold font-sans text-sm">🗺️ Google Maps Loading (LA Grid fallback active)</div>
           <div className="text-[10px] text-slate-500">Status: {status.toUpperCase()}</div>
           {status === 'executing' && (
-            <div className="text-emerald-400 animate-pulse">Ambulance Moving: {ambulancePos.lat.toFixed(4)}, {ambulancePos.lng.toFixed(4)}</div>
+            <div className="text-blue-600 font-bold animate-pulse">Ambulance Moving: {ambulancePos.lat.toFixed(4)}, {ambulancePos.lng.toFixed(4)}</div>
           )}
         </div>
       </div>
@@ -91,21 +91,21 @@ export const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
   }
 
   return (
-    <div className="relative w-full h-[500px] border border-slate-800 rounded-2xl overflow-hidden shadow-2xl">
+    <div className="relative w-full h-[500px] border border-slate-200 rounded-2xl overflow-hidden shadow-md">
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
         center={centerLA}
         zoom={13}
         options={{
           styles: [
-            { elementType: "geometry", stylers: [{ color: "#0f172a" }] },
-            { elementType: "labels.text.stroke", stylers: [{ color: "#0f172a" }] },
-            { elementType: "labels.text.fill", stylers: [{ color: "#1e293b" }] },
-            { featureType: "administrative", stylers: [{ visibility: "off" }] },
-            { featureType: "road", elementType: "geometry", stylers: [{ color: "#1e293b" }] },
-            { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#334155" }] },
-            { featureType: "road", elementType: "labels.text.fill", stylers: [{ color: "#475569" }] },
-            { featureType: "water", elementType: "geometry", stylers: [{ color: "#020617" }] }
+            { elementType: "geometry", stylers: [{ color: "#f5f5f5" }] },
+            { elementType: "labels.text.stroke", stylers: [{ color: "#ffffff" }] },
+            { elementType: "labels.text.fill", stylers: [{ color: "#333333" }] },
+            { featureType: "administrative", stylers: [{ visibility: "on" }] },
+            { featureType: "road", elementType: "geometry", stylers: [{ color: "#ffffff" }] },
+            { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#e0e0e0" }] },
+            { featureType: "road", elementType: "labels.text.fill", stylers: [{ color: "#757575" }] },
+            { featureType: "water", elementType: "geometry", stylers: [{ color: "#c9e2f5" }] }
           ],
           disableDefaultUI: true,
           zoomControl: false,
@@ -196,10 +196,10 @@ export const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
       </GoogleMap>
 
       {/* Info HUD */}
-      <div className="absolute top-4 left-4 bg-slate-900/90 border border-slate-800 rounded-xl p-3 backdrop-blur-md font-mono text-xs text-slate-300 space-y-1">
-        <div className="text-white font-bold">CIVITAS GIS SIMULATION (LA)</div>
-        <div className="flex items-center gap-1.5">
-          <span className={`w-2 h-2 rounded-full ${status === 'executing' ? 'bg-green-500 animate-pulse' : 'bg-amber-500'}`} />
+      <div className="absolute top-4 left-4 bg-white/95 border border-slate-200 rounded-xl p-3 backdrop-blur-md font-mono text-xs text-slate-600 shadow-md space-y-1">
+        <div className="text-slate-800 font-bold font-sans">CIVITAS GIS SIMULATION (LA)</div>
+        <div className="flex items-center gap-1.5 text-slate-500">
+          <span className={`w-2 h-2 rounded-full ${status === 'executing' ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
           <span>Status: {status.toUpperCase()}</span>
         </div>
       </div>

@@ -65,23 +65,23 @@ export const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 p-6 flex flex-col gap-6 font-sans selection:bg-rose-500 selection:text-white">
+    <div className="min-h-screen bg-white text-slate-800 p-6 flex flex-col gap-6 font-sans selection:bg-blue-500 selection:text-white">
       {/* Top Banner Navigation */}
-      <header className="flex justify-between items-center border-b border-slate-900 pb-4">
+      <header className="flex justify-between items-center border-b border-slate-200 pb-4">
         <div className="flex items-center gap-3">
-          <span className="w-4 h-4 bg-rose-500 rounded-full animate-pulse shadow-[0_0_12px_rgba(244,63,94,0.6)]" />
-          <h1 className="text-xl font-bold tracking-wider uppercase text-white font-mono">CIVITAS Traffic Coordinator</h1>
+          <span className="w-4 h-4 bg-blue-600 rounded-full animate-pulse shadow-[0_0_12px_rgba(25,118,210,0.6)]" />
+          <h1 className="text-xl font-bold tracking-wider uppercase text-slate-800 font-mono">CIVITAS Traffic Coordinator</h1>
         </div>
         <div className="flex items-center gap-4">
           {incidentId && (
-            <div className="bg-slate-900 border border-slate-800 rounded-lg px-3 py-1 font-mono text-xs text-slate-400">
-              Session: <span className="text-rose-400">{incidentId}</span>
+            <div className="bg-slate-100 border border-slate-200 rounded-lg px-3 py-1 font-mono text-xs text-slate-600">
+              Session: <span className="text-blue-600 font-bold">{incidentId}</span>
             </div>
           )}
           <button 
             onClick={handleTriggerEmergency}
             disabled={loading || status === 'processing' || status === 'executing'}
-            className="px-5 py-2.5 bg-rose-600 hover:bg-rose-500 disabled:bg-slate-800 disabled:text-slate-500 text-white text-xs font-semibold uppercase tracking-widest rounded-xl transition-all duration-300 font-mono shadow-[0_4px_20px_rgba(225,29,72,0.15)] active:scale-95"
+            className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-200 disabled:text-slate-450 text-white text-xs font-semibold uppercase tracking-widest rounded-xl transition-all duration-300 font-mono shadow-sm active:scale-95"
           >
             {loading ? "Triggering..." : "Trigger Emergency"}
           </button>
@@ -114,9 +114,9 @@ export const Dashboard: React.FC = () => {
 
           {/* Decision Explanation Display */}
           {decision && (
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-5 space-y-3 shadow-2xl">
-              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest font-mono">Explainability Output</h3>
-              <p className="text-sm leading-relaxed text-slate-200">{decision.reasoning_one_liner}</p>
+            <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-3 shadow-sm">
+              <h3 className="text-xs font-bold text-slate-550 uppercase tracking-widest font-mono">Explainability Output</h3>
+              <p className="text-sm leading-relaxed text-slate-700">{decision.reasoning_one_liner}</p>
             </div>
           )}
         </section>
