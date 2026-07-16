@@ -44,6 +44,10 @@ vi.mock('../../src/api/client', () => ({
   }
 }));
 
+vi.mock('../../src/components/GoogleMapComponent', () => ({
+  GoogleMapComponent: () => <div data-testid="google-map-mock">Google Map Mock</div>
+}));
+
 import { MemoryRouter } from 'react-router-dom';
 
 describe('Dashboard Component Tests', () => {

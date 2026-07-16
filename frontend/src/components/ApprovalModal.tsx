@@ -42,8 +42,12 @@ export const ApprovalModal: React.FC<ApprovalModalProps> = ({
           navigate(`/`);
         }
       } catch (err) {
-        console.error("Failed to post approval state", err);
-        navigate(`/`);
+        console.error("Failed to post approval state, running offline fallback redirect", err);
+        if (approved) {
+          navigate(`/incident/${id}/execution`);
+        } else {
+          navigate(`/`);
+        }
       }
     } else {
       navigate(`/`);

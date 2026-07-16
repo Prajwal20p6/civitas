@@ -119,7 +119,7 @@ export const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
             title={`Incident: ${inc.id}`}
             options={{
               icon: {
-                path: window.google.maps.SymbolPath.CIRCLE,
+                path: window.google?.maps?.SymbolPath?.CIRCLE ?? 0,
                 fillColor: '#ef4444',
                 fillOpacity: 1,
                 strokeWeight: 2,
@@ -137,7 +137,7 @@ export const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
             title="Active Incident"
             options={{
               icon: {
-                path: window.google.maps.SymbolPath.CIRCLE,
+                path: window.google?.maps?.SymbolPath?.CIRCLE ?? 0,
                 fillColor: '#ef4444',
                 fillOpacity: 1,
                 strokeWeight: 2,
@@ -154,7 +154,7 @@ export const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
           title="County Hospital"
           options={{
             icon: {
-              path: window.google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+              path: window.google?.maps?.SymbolPath?.FORWARD_CLOSED_ARROW ?? 1,
               fillColor: '#3b82f6',
               fillOpacity: 1,
               strokeWeight: 1,
@@ -182,7 +182,7 @@ export const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
               title="Ambulance"
               options={{
                 icon: {
-                  path: window.google.maps.SymbolPath.CIRCLE,
+                  path: window.google?.maps?.SymbolPath?.CIRCLE ?? 0,
                   fillColor: '#ffffff',
                   fillOpacity: 1,
                   strokeWeight: 3,

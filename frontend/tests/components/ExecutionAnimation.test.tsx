@@ -4,6 +4,11 @@ import { render, screen } from '@testing-library/react';
 import { ExecutionAnimation } from '../../src/components/ExecutionAnimation';
 
 import { MemoryRouter } from 'react-router-dom';
+import { vi } from 'vitest';
+
+vi.mock('../../src/components/GoogleMapComponent', () => ({
+  GoogleMapComponent: () => <div data-testid="google-map-mock">Google Map Mock</div>
+}));
 
 describe('ExecutionAnimation Component', () => {
   test('returns null when status is not executing', () => {

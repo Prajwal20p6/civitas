@@ -6,10 +6,12 @@ import { ProposalComparison } from './components/ProposalComparison';
 import { SimulationHeatmaps } from './components/SimulationHeatmaps';
 import { ApprovalModal } from './components/ApprovalModal';
 import { ExecutionAnimation } from './components/ExecutionAnimation';
+import { useIncidentStream } from './hooks/useIncidentStream';
 
 const IncidentLayout: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const location = useLocation();
+  const { status } = useIncidentStream(id || null);
 
   if (!id) return <Navigate to="/" replace />;
 
@@ -19,6 +21,25 @@ const IncidentLayout: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 p-6 flex flex-col gap-6 font-sans">
+      {/* Success Banner */}
+      {status === 'success' && (
+        <div className="bg-emerald-500/20 border border-emerald-500 text-emerald-400 p-4 rounded-2xl flex items-center justify-between animate-fade-in font-mono text-sm shadow-[0_0_20px_rgba(16,185,129,0.1)]">
+          <div className="flex items-center gap-2">
+            <span>🎉</span>
+            <span><strong>Preemption Success:</strong> Ambulance has arrived safely at destination. Emergency green wave corridor cleared.</span>
+          </div>
+          <Link 
+            to="/"
+            onClick={() => {
+              localStorage.removeItem(`civitas_demo_start_${id}`);
+            }}
+            className="px-3 py-1 bg-emerald-600/90 hover:bg-emerald-500 text-white rounded-lg transition text-xs font-semibold font-sans hover:scale-105"
+          >
+            New Scenario
+          </Link>
+        </div>
+      )}
+
       {/* Top Banner Navigation */}
       <header className="flex justify-between items-center border-b border-slate-900 pb-4">
         <div className="flex items-center gap-3">
