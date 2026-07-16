@@ -11,6 +11,7 @@ import { api } from '../api/client';
 
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate();
+  const [incidents, setIncidents] = useState<any[]>([]);
   const [incidentId, setIncidentId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const { logs, status, decision, setStatus } = useIncidentStream(incidentId);
@@ -18,19 +19,34 @@ export const Dashboard: React.FC = () => {
   const handleTriggerEmergency = async () => {
     setLoading(true);
     try {
+      // Centered on Los Angeles coordinates to align with map center
       const payload = {
         incident_type: 'emergency_911',
-        description: 'Cardiac patient dispatch near Palo Alto University Ave',
-        location: { lat: 37.421, lng: -122.084 },
-        destination: { name: 'County Hospital', lat: 37.438, lng: -122.143 }
+        description: 'Cardiac patient dispatch near Los Angeles Downtown Area',
+        location: { lat: 34.0522, lng: -118.2437 },
+        destination: { name: 'County Hospital', lat: 34.0722, lng: -118.2637 }
       };
       const res = await api.createIncident(payload);
       setIncidentId(res.incident_id);
+      
+      const newInc = {
+        id: res.incident_id,
+        location: payload.location,
+        status: 'processing'
+      };
+      setIncidents(prev => [...prev, newInc]);
       navigate(`/incident/${res.incident_id}`);
     } catch (err) {
       console.warn("API Offline. Initializing local mock workflow instead.");
       const mockId = `mock_${Math.random().toString(36).substring(2, 11)}`;
       setIncidentId(mockId);
+      
+      const newInc = {
+        id: mockId,
+        location: { lat: 34.0522, lng: -118.2437 },
+        status: 'processing'
+      };
+      setIncidents(prev => [...prev, newInc]);
       navigate(`/incident/${mockId}`);
     } finally {
       setLoading(false);
@@ -76,7 +92,7 @@ export const Dashboard: React.FC = () => {
       <main className="grid grid-cols-1 lg:grid-cols-3 gap-6 flex-1">
         {/* Map Display, Proposals & Heatmaps */}
         <section className="lg:col-span-2 flex flex-col gap-6">
-          <GoogleMapComponent status={status} winner={decision?.winner || null} />
+          <GoogleMapComponent status={status} winner={decision?.winner || null} incidents={incidents} />
           
           <ProposalComparison 
             proposalA={decision ? { recommended_route: 'Surface Streets', ambulance_eta: 8, vehicles_impacted: 12 } : null}
