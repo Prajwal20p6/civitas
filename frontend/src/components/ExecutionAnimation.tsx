@@ -1,11 +1,22 @@
 import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { useFirestore } from '../hooks/useFirestore';
 
 interface ExecutionAnimationProps {
-  status: string;
-  winner: string | null;
+  status?: string;
+  winner?: string | null;
 }
 
-export const ExecutionAnimation: React.FC<ExecutionAnimationProps> = ({ status, winner }) => {
+export const ExecutionAnimation: React.FC<ExecutionAnimationProps> = ({ status: propStatus, winner: propWinner }) => {
+  const { id } = useParams<{ id: string }>();
+  const { incidentData } = useFirestore(propStatus !== undefined ? null : (id || null));
+
+  const isActive = !!id || propStatus !== undefined;
+  if (!isActive) return null;
+
+  const status = propStatus !== undefined ? propStatus : incidentData?.status || (id ? 'executing' : 'idle');
+  const winner = propWinner !== undefined ? propWinner : incidentData?.decision?.winner || (id ? 'route_a_speed_first' : null);
+
   const [progress, setProgress] = useState(0);
   const [countdown, setCountdown] = useState(15);
 

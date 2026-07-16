@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { doc, onSnapshot } from 'firebase/firestore';
-import { firestore } from '../../firebase';
+import { firestore } from '../firebase';
 
 export const useFirestore = (incidentId: string | null) => {
   const [incidentData, setIncidentData] = useState<any>(null);

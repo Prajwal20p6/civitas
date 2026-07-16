@@ -1,4 +1,6 @@
 import React from 'react';
+import { useParams } from 'react-router-dom';
+import { useIncidentStream } from '../hooks/useIncidentStream';
 
 export interface StreamLog {
   timestamp: number;
@@ -6,11 +8,16 @@ export interface StreamLog {
 }
 
 interface AgentReasoningStreamProps {
-  logs: StreamLog[];
-  status: string;
+  logs?: StreamLog[];
+  status?: string;
 }
 
-export const AgentReasoningStream: React.FC<AgentReasoningStreamProps> = ({ logs, status }) => {
+export const AgentReasoningStream: React.FC<AgentReasoningStreamProps> = ({ logs: propLogs, status: propStatus }) => {
+  const { id } = useParams<{ id: string }>();
+  const stream = useIncidentStream(propLogs ? null : (id || null));
+
+  const logs = propLogs !== undefined ? propLogs : stream.logs;
+  const status = propStatus !== undefined ? propStatus : stream.status;
   return (
     <div className="w-full bg-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col gap-4 shadow-2xl">
       <div className="flex justify-between items-center pb-3 border-b border-slate-800">

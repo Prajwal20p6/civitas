@@ -3,9 +3,15 @@ import { describe, test, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { ProposalComparison } from '../../src/components/ProposalComparison';
 
+import { MemoryRouter } from 'react-router-dom';
+
 describe('ProposalComparison Component', () => {
   test('returns null when proposals are missing', () => {
-    const { container } = render(<ProposalComparison proposalA={null} proposalB={null} winner={null} />);
+    const { container } = render(
+      <MemoryRouter>
+        <ProposalComparison proposalA={null} proposalB={null} winner={null} />
+      </MemoryRouter>
+    );
     expect(container.firstChild).toBeNull();
   });
 
@@ -13,7 +19,11 @@ describe('ProposalComparison Component', () => {
     const propA = { recommended_route: 'Surface Streets', ambulance_eta: 8, vehicles_impacted: 12 };
     const propB = { recommended_route: 'Highway 1', ambulance_eta: 11, vehicles_impacted: 3 };
     
-    render(<ProposalComparison proposalA={propA} proposalB={propB} winner="route_a_speed_first" />);
+    render(
+      <MemoryRouter>
+        <ProposalComparison proposalA={propA} proposalB={propB} winner="route_a_speed_first" />
+      </MemoryRouter>
+    );
     
     expect(screen.getByText(/Plan A \(Speed-First\)/i)).toBeInTheDocument();
     expect(screen.getByText(/Plan B \(Fairness-First\)/i)).toBeInTheDocument();

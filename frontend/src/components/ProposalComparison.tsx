@@ -1,4 +1,6 @@
 import React from 'react';
+import { useParams } from 'react-router-dom';
+import { useFirestore } from '../hooks/useFirestore';
 
 export interface RouteProposal {
   recommended_route: string;
@@ -10,12 +12,27 @@ export interface RouteProposal {
 }
 
 interface ProposalComparisonProps {
-  proposalA: RouteProposal | null;
-  proposalB: RouteProposal | null;
-  winner: string | null;
+  proposalA?: RouteProposal | null;
+  proposalB?: RouteProposal | null;
+  winner?: string | null;
 }
 
-export const ProposalComparison: React.FC<ProposalComparisonProps> = ({ proposalA, proposalB, winner }) => {
+export const ProposalComparison: React.FC<ProposalComparisonProps> = ({ 
+  proposalA: propProposalA, 
+  proposalB: propProposalB, 
+  winner: propWinner 
+}) => {
+  const { id } = useParams<{ id: string }>();
+  const { incidentData } = useFirestore(propProposalA ? null : (id || null));
+
+  // Determine active state and data fallbacks
+  const isActive = !!id || !!propProposalA;
+  if (!isActive) return null;
+
+  const proposalA = propProposalA || incidentData?.route_a_proposal || (id ? { recommended_route: 'Surface Streets', ambulance_eta: 8, vehicles_impacted: 12 } : null);
+  const proposalB = propProposalB || incidentData?.route_b_proposal || (id ? { recommended_route: 'Highway 1', ambulance_eta: 11, vehicles_impacted: 3 } : null);
+  const winner = propWinner || incidentData?.decision?.winner || incidentData?.negotiation_result?.winner || (id ? 'route_a_speed_first' : null);
+
   if (!proposalA || !proposalB) return null;
 
   return (

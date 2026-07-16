@@ -19,7 +19,8 @@ export const useIncidentStream = (incidentId: string | null) => {
     }
 
     setStatus('connecting');
-    const wsBase = import.meta.env.VITE_WS_URL || 'ws://localhost:8000';
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000';
+    const wsBase = import.meta.env.VITE_WS_URL || backendUrl;
     // Clean protocol formatting
     const wsUrl = wsBase.startsWith('http') 
       ? wsBase.replace(/^http/, 'ws') 

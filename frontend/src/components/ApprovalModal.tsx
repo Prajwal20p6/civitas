@@ -1,13 +1,57 @@
 import React from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useFirestore } from '../hooks/useFirestore';
+import { api } from '../api/client';
 
 interface ApprovalModalProps {
-  show: boolean;
-  onApprove: () => void;
-  onOverride: () => void;
+  show?: boolean;
+  onApprove?: () => void;
+  onOverride?: () => void;
 }
 
-export const ApprovalModal: React.FC<ApprovalModalProps> = ({ show, onApprove, onOverride }) => {
+export const ApprovalModal: React.FC<ApprovalModalProps> = ({ 
+  show: propShow, 
+  onApprove: propOnApprove, 
+  onOverride: propOnOverride 
+}) => {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const { incidentData } = useFirestore(propShow !== undefined ? null : (id || null));
+
+  // Show if propShow is true, or if we have an ID and status is pending_approval, or if we are on approval route.
+  const show = propShow !== undefined ? propShow : (!!id && (incidentData?.status === 'pending_approval' || true));
+
   if (!show) return null;
+
+  const handleAction = async (approved: boolean) => {
+    if (propOnApprove && approved) {
+      propOnApprove();
+      return;
+    }
+    if (propOnOverride && !approved) {
+      propOnOverride();
+      return;
+    }
+
+    if (id) {
+      try {
+        await api.approveIncident(id, approved ? 'approved' : 'denied', "Operator cleared green waves.");
+        if (approved) {
+          navigate(`/incident/${id}/execution`);
+        } else {
+          navigate(`/`);
+        }
+      } catch (err) {
+        console.error("Failed to post approval state", err);
+        navigate(`/`);
+      }
+    } else {
+      navigate(`/`);
+    }
+  };
+
+  const onApprove = () => handleAction(true);
+  const onOverride = () => handleAction(false);
 
   return (
     <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">

@@ -1,11 +1,16 @@
 import React from 'react';
 import { describe, test, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { ApprovalModal } from '../../src/components/ApprovalModal';
 
 describe('ApprovalModal Component', () => {
   test('returns null when show is false', () => {
-    const { container } = render(<ApprovalModal show={false} onApprove={() => {}} onOverride={() => {}} />);
+    const { container } = render(
+      <MemoryRouter>
+        <ApprovalModal show={false} onApprove={() => {}} onOverride={() => {}} />
+      </MemoryRouter>
+    );
     expect(container.firstChild).toBeNull();
   });
 
@@ -13,7 +18,11 @@ describe('ApprovalModal Component', () => {
     const onApprove = vi.fn();
     const onOverride = vi.fn();
     
-    render(<ApprovalModal show={true} onApprove={onApprove} onOverride={onOverride} />);
+    render(
+      <MemoryRouter>
+        <ApprovalModal show={true} onApprove={onApprove} onOverride={onOverride} />
+      </MemoryRouter>
+    );
     
     expect(screen.getByText(/Operator Approval Required/i)).toBeInTheDocument();
     

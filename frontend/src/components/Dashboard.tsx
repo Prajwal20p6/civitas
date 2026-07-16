@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { GoogleMapComponent } from './GoogleMapComponent';
 import { AgentReasoningStream } from './AgentReasoningStream';
 import { ProposalComparison } from './ProposalComparison';
@@ -9,6 +10,7 @@ import { useIncidentStream } from '../hooks/useIncidentStream';
 import { api } from '../api/client';
 
 export const Dashboard: React.FC = () => {
+  const navigate = useNavigate();
   const [incidentId, setIncidentId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const { logs, status, decision, setStatus } = useIncidentStream(incidentId);
@@ -24,9 +26,12 @@ export const Dashboard: React.FC = () => {
       };
       const res = await api.createIncident(payload);
       setIncidentId(res.incident_id);
+      navigate(`/incident/${res.incident_id}`);
     } catch (err) {
       console.warn("API Offline. Initializing local mock workflow instead.");
-      setIncidentId(`mock_${Math.random().toString(36).substring(2, 11)}`);
+      const mockId = `mock_${Math.random().toString(36).substring(2, 11)}`;
+      setIncidentId(mockId);
+      navigate(`/incident/${mockId}`);
     } finally {
       setLoading(false);
     }

@@ -3,9 +3,15 @@ import { describe, test, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { AgentReasoningStream } from '../../src/components/AgentReasoningStream';
 
+import { MemoryRouter } from 'react-router-dom';
+
 describe('AgentReasoningStream Component', () => {
   test('renders empty idle message when no logs are provided', () => {
-    render(<AgentReasoningStream logs={[]} status="idle" />);
+    render(
+      <MemoryRouter>
+        <AgentReasoningStream logs={[]} status="idle" />
+      </MemoryRouter>
+    );
     expect(screen.getByText(/No incident active. Stream idle./i)).toBeInTheDocument();
   });
 
@@ -13,7 +19,11 @@ describe('AgentReasoningStream Component', () => {
     const logs = [
       { timestamp: Date.now(), message: 'Perception classified incident' }
     ];
-    render(<AgentReasoningStream logs={logs} status="processing" />);
+    render(
+      <MemoryRouter>
+        <AgentReasoningStream logs={logs} status="processing" />
+      </MemoryRouter>
+    );
     
     expect(screen.getByText(/● LIVE/i)).toBeInTheDocument();
     expect(screen.getByText(/Perception classified incident/i)).toBeInTheDocument();

@@ -44,9 +44,15 @@ vi.mock('../../src/api/client', () => ({
   }
 }));
 
+import { MemoryRouter } from 'react-router-dom';
+
 describe('Dashboard Component Tests', () => {
   test('renders initial landing state with Trigger Emergency button', () => {
-    render(<Dashboard />);
+    render(
+      <MemoryRouter>
+        <Dashboard />
+      </MemoryRouter>
+    );
     
     // Verify title and button presence
     expect(screen.getByText(/CIVITAS Traffic Coordinator/i)).toBeInTheDocument();
@@ -54,7 +60,11 @@ describe('Dashboard Component Tests', () => {
   });
 
   test('clicking Trigger Emergency launches flow and displays stream logs', async () => {
-    render(<Dashboard />);
+    render(
+      <MemoryRouter>
+        <Dashboard />
+      </MemoryRouter>
+    );
     
     const triggerBtn = screen.getByRole('button', { name: /Trigger Emergency/i });
     fireEvent.click(triggerBtn);
@@ -67,7 +77,11 @@ describe('Dashboard Component Tests', () => {
   });
 
   test('displays operator approval modal when status is pending_approval', async () => {
-    render(<Dashboard />);
+    render(
+      <MemoryRouter>
+        <Dashboard />
+      </MemoryRouter>
+    );
     
     const triggerBtn = screen.getByRole('button', { name: /Trigger Emergency/i });
     fireEvent.click(triggerBtn);

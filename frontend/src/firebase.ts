@@ -23,7 +23,7 @@ try {
     database = getDatabase(app);
   }
 } catch (error) {
-  console.warn("Firebase initialization failed. Offline mock mode enabled.");
+  console.warn("Firebase initialization failed. Offline mock mode enabled.", error);
 }
 
 export { firestore, database };
