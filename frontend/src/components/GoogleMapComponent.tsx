@@ -3,6 +3,40 @@ import { GoogleMap, useJsApiLoader, MarkerF, PolylineF } from '@react-google-map
 import { useParams } from 'react-router-dom';
 import { useFirestore } from '../hooks/useFirestore';
 
+// --- Error Boundary for Google Maps API/rendering Errors ---
+class MapErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean; error: Error | null }> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error("Google Maps Error Boundary caught an error:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="relative w-full h-[500px] bg-red-50 border border-red-200 rounded-2xl overflow-hidden shadow-sm flex flex-col items-center justify-center p-6 text-center">
+          <div className="text-red-600 font-bold mb-2">⚠️ Google Maps Load Error</div>
+          <div className="text-xs text-red-500 font-mono mb-4">{this.state.error?.message || "Unknown rendering or API error"}</div>
+          <button 
+            onClick={() => this.setState({ hasError: false, error: null })}
+            className="px-4 py-2 bg-red-600 text-white rounded-lg text-xs hover:bg-red-700 transition-colors shadow-sm font-sans"
+          >
+            Retry Loading Map
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 const mapContainerStyle = {
   width: '100%',
   height: '100%'
@@ -91,12 +125,15 @@ export const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
   }
 
   return (
-    <div className="relative w-full h-[500px] border border-slate-200 rounded-2xl overflow-hidden shadow-md">
-      <GoogleMap
-        mapContainerStyle={mapContainerStyle}
-        center={centerLA}
-        zoom={13}
-        options={{
+    <MapErrorBoundary>
+      <div className="relative w-full h-[500px] border border-slate-200 rounded-2xl overflow-hidden shadow-md">
+        <GoogleMap
+          mapContainerStyle={mapContainerStyle}
+          {...({
+            defaultCenter: centerLA,
+            defaultZoom: 11
+          } as any)}
+          options={{
           styles: [
             { elementType: "geometry", stylers: [{ color: "#f5f5f5" }] },
             { elementType: "labels.text.stroke", stylers: [{ color: "#ffffff" }] },
@@ -203,6 +240,7 @@ export const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
           <span>Status: {status.toUpperCase()}</span>
         </div>
       </div>
-    </div>
+      </div>
+    </MapErrorBoundary>
   );
 };
