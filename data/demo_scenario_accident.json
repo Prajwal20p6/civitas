@@ -1,0 +1,71 @@
+{
+  "incident_id": "DEMO_002",
+  "incident_type": "accident",
+  "description": "Multi-vehicle collision on Highway 101 northbound near Exit 12. Two lanes blocked. Fire department dispatched.",
+  "location": {
+    "lat": 37.385,
+    "lng": -122.075,
+    "area_name": "Mountain View, CA - Highway 101 & Rengstorff Ave"
+  },
+  "destination": {
+    "name": "El Camino Hospital",
+    "lat": 37.369,
+    "lng": -122.081
+  },
+  "baseline_eta_minutes": 18,
+  "traffic_conditions": {
+    "Highway_101": "blocked",
+    "Surface_Streets": "heavy",
+    "side_streets": "moderate"
+  },
+  "current_time": "08:30",
+  "pre_computed_results": {
+    "route_a_proposal": {
+      "agent_id": "route_a_speed_first",
+      "recommended_route": "Surface Streets",
+      "ambulance_eta": 10,
+      "vehicles_impacted": 18,
+      "avg_delay_per_vehicle": 3,
+      "safety_score": 0.85,
+      "reasoning": "Surface Streets bypass avoids blocked highway. Higher civilian impact but fastest available path.",
+      "confidence": 0.88
+    },
+    "route_b_proposal": {
+      "agent_id": "route_b_fairness_first",
+      "recommended_route": "Side Streets via Shoreline",
+      "ambulance_eta": 14,
+      "vehicles_impacted": 5,
+      "avg_delay_per_vehicle": 2,
+      "safety_score": 0.75,
+      "reasoning": "Shoreline route avoids residential areas. Longer ETA but minimal civilian disruption.",
+      "confidence": 0.82
+    },
+    "negotiation_result": {
+      "winner": "route_a_speed_first",
+      "score_a": 84.0,
+      "score_b": 68.0,
+      "margin": 16.0,
+      "reasoning": "Route A wins: accident severity demands fastest response despite higher civilian impact.",
+      "heatmap_a_url": "file:///mock_a_accident.png",
+      "heatmap_b_url": "file:///mock_b_accident.png",
+      "counterfactual": {
+        "baseline_eta_no_intervention": 18,
+        "planned_eta_with_intervention": 10,
+        "time_saved": 8
+      }
+    },
+    "explainability": {
+      "decision": "Route ambulance via Surface Streets bypass",
+      "reasoning_one_liner": "Multi-vehicle collision blocks Highway 101. Surface Streets bypass saves 8 minutes despite impacting 18 vehicles.",
+      "counterfactual": "Without intervention: 18 min ETA. With this plan: 10 min ETA. Saves 8 minutes.",
+      "confidence": 0.88,
+      "approval_required": true
+    }
+  },
+  "expected_outputs": {
+    "total_time_seconds": 7.2,
+    "ambulance_arrives_at_seconds": 600,
+    "final_approval_status": "approved",
+    "success_message": "Ambulance routed via Surface Streets bypass. Arrival time: 8:40 AM."
+  }
+}

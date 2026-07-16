@@ -55,6 +55,9 @@ class OrchestratorAgent(SequentialAgent):
         # Determine unique incident identifier
         i_id = incident_id or getattr(incident, "incident_id", None) or f"incident_{uuid.uuid4().hex[:8]}"
         
+        # Scope session state to this specific incident ID for concurrency support
+        self.state = get_session_state(i_id)
+        
         # Step 1: Ingest and Classify Incident
         self.db.push_reasoning_log(i_id, "[Orchestrator] Running Perception Agent classification...")
         classification = await self.perception.execute(incident)

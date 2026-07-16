@@ -1,0 +1,71 @@
+{
+  "incident_id": "DEMO_003",
+  "incident_type": "hazard",
+  "description": "Minor debris on road surface near intersection of Castro St and El Camino Real. Single lane partially obstructed.",
+  "location": {
+    "lat": 37.394,
+    "lng": -122.079,
+    "area_name": "Mountain View, CA - Castro St & El Camino Real"
+  },
+  "destination": {
+    "name": "City Maintenance Depot",
+    "lat": 37.400,
+    "lng": -122.100
+  },
+  "baseline_eta_minutes": 12,
+  "traffic_conditions": {
+    "Highway_101": "moderate",
+    "Surface_Streets": "light",
+    "side_streets": "light"
+  },
+  "current_time": "14:15",
+  "pre_computed_results": {
+    "route_a_proposal": {
+      "agent_id": "route_a_speed_first",
+      "recommended_route": "Surface Streets",
+      "ambulance_eta": 6,
+      "vehicles_impacted": 4,
+      "avg_delay_per_vehicle": 1,
+      "safety_score": 0.95,
+      "reasoning": "Light traffic conditions. Direct surface route is optimal with minimal disruption.",
+      "confidence": 0.94
+    },
+    "route_b_proposal": {
+      "agent_id": "route_b_fairness_first",
+      "recommended_route": "Highway 1 Bypass",
+      "ambulance_eta": 9,
+      "vehicles_impacted": 2,
+      "avg_delay_per_vehicle": 1,
+      "safety_score": 0.90,
+      "reasoning": "Highway bypass avoids all residential streets. Slightly longer but zero pedestrian risk.",
+      "confidence": 0.89
+    },
+    "negotiation_result": {
+      "winner": "route_a_speed_first",
+      "score_a": 89.3,
+      "score_b": 90.7,
+      "margin": 1.4,
+      "reasoning": "Route B marginally wins on combined score, but margin is within auto-approval threshold for minor hazard.",
+      "heatmap_a_url": "file:///mock_a_hazard.png",
+      "heatmap_b_url": "file:///mock_b_hazard.png",
+      "counterfactual": {
+        "baseline_eta_no_intervention": 12,
+        "planned_eta_with_intervention": 6,
+        "time_saved": 6
+      }
+    },
+    "explainability": {
+      "decision": "Route maintenance vehicle via Surface Streets",
+      "reasoning_one_liner": "Minor debris hazard. Low-impact scenario auto-approved. Surface Streets route clears in 6 minutes.",
+      "counterfactual": "Without intervention: 12 min ETA. With this plan: 6 min ETA. Saves 6 minutes.",
+      "confidence": 0.94,
+      "approval_required": false
+    }
+  },
+  "expected_outputs": {
+    "total_time_seconds": 4.8,
+    "ambulance_arrives_at_seconds": 360,
+    "final_approval_status": "auto_approved",
+    "success_message": "Low-impact hazard auto-cleared. Maintenance dispatched."
+  }
+}

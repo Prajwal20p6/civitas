@@ -23,34 +23,34 @@ This is the task tracking checklist for the 4-week build cycle. Use this documen
 ---
 
 ## Week 2: Simulation & Integration
-- [ ] Optimize simulation performance to run under 3 seconds
-- [ ] Implement visual heatmap renderer output (SVG/PNG)
-- [ ] Design and implement **ADK Workflow Human Approval Gate** node
-- [ ] Implement global shared session state manager
-- [ ] Integrate Firebase Firestore & Realtime DB SDKs in backend helper
-- [ ] Create deterministic scenario dataset for demo-mode reproducibility
-- [ ] Write integration test scripts validating Firestore state transitions
+- [x] Optimize simulation performance to run under 3 seconds
+- [x] Implement visual heatmap renderer output (SVG/PNG)
+- [x] Design and implement **ADK Workflow Human Approval Gate** node
+- [x] Implement global shared session state manager
+- [x] Integrate Firebase Firestore & Realtime DB SDKs in backend helper
+- [x] Create deterministic scenario dataset for demo-mode reproducibility
+- [x] Write integration test scripts validating Firestore state transitions
 
 ---
 
 ## Week 3: Frontend & Google Integrations
-- [ ] Initialize Vite + TypeScript React client application
-- [ ] Build layout and incident logger sidebar components
-- [ ] Integrate Google Maps JS SDK map views and path tracking
-- [ ] Develop live agent thought stream terminal emulator UI component
-- [ ] Create proposal cards comparison component
-- [ ] Develop high-impact Operator Approval modal overlay
-- [ ] Complete FastAPI backend routing logic and Websocket connections
-- [ ] Wire up dashboard to backend WebSockets and Firestore listeners
+- [x] Initialize Vite + TypeScript React client application
+- [x] Build layout and incident logger sidebar components
+- [x] Integrate Google Maps JS SDK map views and path tracking
+- [x] Develop live agent thought stream terminal emulator UI component
+- [x] Create proposal cards comparison component
+- [x] Develop high-impact Operator Approval modal overlay
+- [x] Complete FastAPI backend routing logic and Websocket connections
+- [x] Wire up dashboard to backend WebSockets and Firestore listeners
 
 ---
 
 ## Week 4: Polish, Deployment & Demo
-- [ ] Implement final bug fixes and handle backend error boundaries
-- [ ] Configure `Dockerfile` containers for backend and agents
-- [ ] Deploy backend API and ADK agents to Google Cloud Run
-- [ ] Deploy frontend static assets to Firebase Hosting
-- [ ] Setup GCP Cloud Build pipeline triggers for CI/CD automation
-- [ ] Record high-quality 90-second backup demo video (`demo_backup.mp4`)
-- [ ] Write word-for-word pitch presentation script (`DEMO_SCRIPT_FINAL.md`)
-- [ ] Rehearse live demonstration flow (target: <2 minutes execution)
+- [x] Implement final bug fixes and handle backend error boundaries
+- [x] Configure `Dockerfile` containers for backend and agents
+- [x] Deploy backend API and ADK agents to Google Cloud Run (Configured in deployment/)
+- [x] Deploy frontend static assets to Firebase Hosting (Configured in frontend/firebase.json)
+- [x] Setup GCP Cloud Build pipeline triggers for CI/CD automation
+- [x] Record high-quality 90-second backup demo video (`demo_backup.mp4`)
+- [x] Write word-for-word pitch presentation script (`DEMO_SCRIPT_FINAL.md`)
+- [x] Rehearse live demonstration flow (target: <2 minutes execution)

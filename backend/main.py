@@ -2,10 +2,14 @@ import os
 import sys
 import uuid
 import asyncio
+import logging
 from typing import Dict, List, Any
 from pydantic import BaseModel, Field
-from fastapi import FastAPI, BackgroundTasks, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, BackgroundTasks, HTTPException, WebSocket, WebSocketDisconnect, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+
+logger = logging.getLogger("civitas.backend")
 
 # Dynamically add agents directory to sys.path to allow sibling imports
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -29,6 +33,37 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# --- Global Error Boundary Middleware ---
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    """
+    Catch-all error boundary for unhandled exceptions.
+    Returns a structured JSON error response instead of crashing.
+    """
+    logger.error(f"Unhandled exception on {request.method} {request.url.path}: {exc}", exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={
+            "error": "internal_server_error",
+            "message": "An unexpected error occurred. The CIVITAS team has been notified.",
+            "detail": str(exc) if os.environ.get("CIVITAS_DEBUG", "").lower() == "true" else None
+        }
+    )
+
+
+@app.exception_handler(HTTPException)
+async def http_exception_handler(request: Request, exc: HTTPException):
+    """Structured handler for HTTP exceptions (404, 422, etc.)."""
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={
+            "error": f"http_{exc.status_code}",
+            "message": exc.detail
+        }
+    )
+
 
 # Initialize Firebase Client wrapper
 db_client = FirebaseClient()
@@ -170,8 +205,32 @@ async def execute_orchestration_pipeline(incident_id: str, req: IncidentCreateRe
                     "decision_time_utc": _time.strftime("%Y-%m-%dT%H:%M:%SZ")
                 }
             }
+            
+            # Save intermediate results (especially the 'pending_approval' status) to database
+            db_client.update_incident(incident_id, db_data)
+            
+            if decision.requires_approval:
+                from src.agents.approval_gate import ApprovalGateAgent, ApprovalGateInput
+                gate_agent = ApprovalGateAgent(db_client=db_client)
+                
+                # Fetch perception priority score if present
+                inc_record = db_client.get_incident(incident_id) or {}
+                perception_data = inc_record.get("perception", {})
+                priority_score = perception_data.get("priority_score", 0.95)
+                
+                gate_input = ApprovalGateInput(
+                    incident_id=incident_id,
+                    decision=decision.winner,
+                    reasoning=decision.reasoning_summary,
+                    impact_score=priority_score,
+                    timestamp=_time.strftime("%Y-%m-%dT%H:%M:%SZ")
+                )
+                
+                gate_result = await gate_agent.execute(gate_input)
+                status = "executing" if gate_result["status"] == "approved" else "denied"
+                db_data["status"] = status
 
-        # 4. Save results to Database
+        # 4. Save final results to Database
         db_client.update_incident(incident_id, db_data)
         
         winner_label = db_data["decision"]["winner"].replace("_", " ").title()

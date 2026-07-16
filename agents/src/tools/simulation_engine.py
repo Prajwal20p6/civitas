@@ -1,5 +1,12 @@
 import os
+import time
+import logging
 from typing import Dict, Any, List
+
+logger = logging.getLogger(__name__)
+
+# Maximum allowed simulation execution time in seconds
+SIMULATION_DEADLINE_SECONDS = 3.0
 
 try:
     import numpy as np
@@ -24,11 +31,17 @@ class GridTrafficSimulator:
             "I6": {"name": "County General Hospital Entrance", "congestion": 0.5}
         }
         
-    def generate_heatmap_image(self, route_name: str) -> str:
+    def generate_heatmap_image(self, route_name: str, deadline: float = None) -> str:
         """
         Generate a visual PNG heatmap of network congestion using matplotlib.
+        Returns mock URL if deadline exceeded or matplotlib unavailable.
         """
         if not HAS_PLOT:
+            return f"mock_url_for_{route_name.lower()}_heatmap.png"
+
+        # Early exit if past deadline
+        if deadline is not None and time.monotonic() > deadline:
+            logger.warning("Heatmap generation skipped: simulation deadline exceeded")
             return f"mock_url_for_{route_name.lower()}_heatmap.png"
             
         try:
@@ -72,9 +85,15 @@ class GridTrafficSimulator:
         except Exception:
             return f"mock_url_for_{route_name.lower()}_heatmap.png"
 
-    def simulate_route(self, route_name: str, base_eta: int) -> Dict[str, Any]:
+    def simulate_route(self, route_name: str, base_eta: int, deadline: float = None) -> Dict[str, Any]:
         """
         Simulate travel along a proposed route.
+        
+        Args:
+            route_name: Name of the route corridor
+            base_eta: Baseline ETA in minutes without optimization
+            deadline: Monotonic time deadline (from time.monotonic()). If exceeded,
+                      heatmap generation is skipped but metrics are still computed.
         
         Returns:
             ambulance_arrival_time: int (minutes)
@@ -82,11 +101,13 @@ class GridTrafficSimulator:
             avg_delay: int (minutes per vehicle)
             collision_risk: float
             heatmap: str (URL or local file path)
+            execution_time_ms: float (wall-clock execution time)
         """
+        t0 = time.monotonic()
         name = route_name.lower()
         
-        # 1. Generate visual heatmap file
-        heatmap_path = self.generate_heatmap_image(route_name)
+        # 1. Generate visual heatmap file (respects deadline)
+        heatmap_path = self.generate_heatmap_image(route_name, deadline=deadline)
         
         # 2. Determine simulator metrics
         if "surface" in name or "street" in name:
@@ -100,10 +121,14 @@ class GridTrafficSimulator:
             avg_delay = 4
             collision_risk = 0.1
             
+        elapsed_ms = (time.monotonic() - t0) * 1000
+        logger.info(f"simulate_route({route_name}) completed in {elapsed_ms:.1f}ms")
+
         return {
             "ambulance_arrival_time": ambulance_arrival_time,
             "vehicles_delayed": vehicles_delayed,
             "avg_delay": avg_delay,
             "collision_risk": collision_risk,
-            "heatmap": heatmap_path
+            "heatmap": heatmap_path,
+            "execution_time_ms": elapsed_ms
         }
