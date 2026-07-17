@@ -191,33 +191,54 @@ async def execute_orchestration_pipeline(incident_id: str, req: IncidentCreateRe
 
             demo_path = os.path.join(base_dir, "data", "demo_scenario_final.json")
             with open(demo_path, "r") as f:
-                demo = _json.load(f)
-            pre = demo["pre_computed_results"]
+                demo_data = _json.load(f)
+
+            desc = req.description.lower()
+            if "hazard" in desc or "spill" in desc:
+                scenario_key = "hazard"
+            elif "accident" in desc or "collision" in desc:
+                scenario_key = "accident"
+            else:
+                scenario_key = "medical"
+
+            scenario = demo_data["scenarios"][scenario_key]
+            pre = scenario["pre_computed_results"]
 
             # Write all agent outputs to DB
             db_client.update_incident(
                 incident_id,
                 {
                     "perception": {
-                        "incident_type": "medical_emergency",
-                        "severity": "critical",
-                        "priority_score": 0.95,
+                        "incident_type": scenario["incident_type"],
+                        "severity": "critical"
+                        if scenario_key == "medical"
+                        else ("major" if scenario_key == "accident" else "minor"),
+                        "priority_score": 0.95
+                        if scenario_key == "medical"
+                        else (0.70 if scenario_key == "accident" else 0.40),
                     },
                     "route_a_proposal": pre["route_a_proposal"],
                     "route_b_proposal": pre["route_b_proposal"],
                     "negotiation_result": pre["negotiation_result"],
                     "explainability": pre["explainability"],
+                    "heatmaps": {
+                        "heatmap_a": pre["negotiation_result"]["heatmap_a_url"],
+                        "heatmap_b": pre["negotiation_result"]["heatmap_b_url"],
+                    },
                 },
             )
 
-            status = "pending_approval"
+            requires_approval = pre["explainability"]["approval_required"]
+            status = "pending_approval" if requires_approval else "executing"
             db_data = {
                 "status": status,
                 "decision": {
                     "winner": pre["negotiation_result"]["winner"],
                     "reasoning_one_liner": pre["explainability"]["reasoning_one_liner"],
-                    "requires_approval": True,
+                    "requires_approval": requires_approval,
                     "decision_time_utc": _time.strftime("%Y-%m-%dT%H:%M:%SZ"),
+                    "heatmap_a_url": pre["negotiation_result"]["heatmap_a_url"],
+                    "heatmap_b_url": pre["negotiation_result"]["heatmap_b_url"],
                 },
             }
         else:
@@ -269,7 +290,9 @@ async def execute_orchestration_pipeline(incident_id: str, req: IncidentCreateRe
 
                 gate_result = await gate_agent.execute(gate_input)
                 status = (
-                    "executing" if gate_result["status"] == "approved" else "denied"
+                    "executing"
+                    if gate_result["status"] in ("approved", "auto_approved")
+                    else "denied"
                 )
                 db_data["status"] = status
 

@@ -18,12 +18,36 @@ export const Dashboard: React.FC = () => {
 
   const handleTriggerEmergency = async () => {
     setLoading(true);
+    const scenarios = [
+      {
+        type: 'emergency_911',
+        desc: 'Cardiac patient dispatch near Los Angeles Downtown Area',
+        key: 'medical',
+        lat: 34.0522,
+        lng: -118.2437
+      },
+      {
+        type: 'traffic_sensor',
+        desc: 'Multi-vehicle collision near Downtown LA',
+        key: 'accident',
+        lat: 34.0562,
+        lng: -118.2487
+      },
+      {
+        type: 'manual_report',
+        desc: 'Chemical spill near Long Beach',
+        key: 'hazard',
+        lat: 33.7430,
+        lng: -118.1180
+      }
+    ];
+    const selected = scenarios[Math.floor(Math.random() * scenarios.length)];
+
     try {
-      // Centered on Los Angeles coordinates to align with map center
       const payload = {
-        incident_type: 'emergency_911',
-        description: 'Cardiac patient dispatch near Los Angeles Downtown Area',
-        location: { lat: 34.0522, lng: -118.2437 },
+        incident_type: selected.type,
+        description: selected.desc,
+        location: { lat: selected.lat, lng: selected.lng },
         destination: { name: 'County Hospital', lat: 34.0722, lng: -118.2637 }
       };
       const res = await api.createIncident(payload);
@@ -38,12 +62,12 @@ export const Dashboard: React.FC = () => {
       navigate(`/incident/${res.incident_id}`);
     } catch (err) {
       console.warn("API Offline. Initializing local mock workflow instead.");
-      const mockId = `mock_${Math.random().toString(36).substring(2, 11)}`;
+      const mockId = `mock_${selected.key}_${Math.random().toString(36).substring(2, 11)}`;
       setIncidentId(mockId);
       
       const newInc = {
         id: mockId,
-        location: { lat: 34.0522, lng: -118.2437 },
+        location: { lat: selected.lat, lng: selected.lng },
         status: 'processing'
       };
       setIncidents(prev => [...prev, newInc]);

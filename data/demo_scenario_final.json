@@ -1,16 +1,16 @@
 {
-  "incident_id": "DEMO_001",
+  "incident_id": "DEMO_MEDICAL",
   "incident_type": "medical_emergency",
-  "description": "Cardiac patient dispatch from residential area to County Hospital",
+  "description": "Cardiac patient dispatch near Los Angeles Downtown Area",
   "location": {
-    "lat": 37.421,
-    "lng": -122.084,
-    "area_name": "Palo Alto, CA - University Ave & El Camino Real"
+    "lat": 34.0522,
+    "lng": -118.2437,
+    "area_name": "Downtown LA - 5th & Broadway"
   },
   "destination": {
     "name": "County Hospital",
-    "lat": 37.438,
-    "lng": -122.143
+    "lat": 34.0722,
+    "lng": -118.2637
   },
   "baseline_eta_minutes": 22,
   "traffic_conditions": {
@@ -26,9 +26,9 @@
       "ambulance_eta": 8,
       "vehicles_impacted": 12,
       "avg_delay_per_vehicle": 2,
-      "safety_score": 0.9,
-      "reasoning": "Surface Streets is shortest path, saves 3 minutes despite routing through residential.",
-      "confidence": 0.92
+      "safety_score": 0.90,
+      "reasoning": "Surface Streets is the shortest path, saving 14 minutes off baseline to prioritize cardiac patient survival.",
+      "confidence": 0.95
     },
     "route_b_proposal": {
       "agent_id": "route_b_fairness_first",
@@ -36,18 +36,18 @@
       "ambulance_eta": 11,
       "vehicles_impacted": 3,
       "avg_delay_per_vehicle": 4,
-      "safety_score": 0.8,
-      "reasoning": "Highway 1 has fewer intersections, minimizes collateral impact despite longer route.",
-      "confidence": 0.87
+      "safety_score": 0.80,
+      "reasoning": "Highway 1 balances speed with minimal collateral delay (only 3 vehicles delayed).",
+      "confidence": 0.88
     },
     "negotiation_result": {
       "winner": "route_a_speed_first",
       "score_a": 92.0,
       "score_b": 74.0,
       "margin": 18.0,
-      "reasoning": "Agent A achieves primary goal (minimizing ambulance ETA) with acceptable collateral impact.",
-      "heatmap_a_url": "file:///mock_a.png",
-      "heatmap_b_url": "file:///mock_b.png",
+      "reasoning": "Agent A (Speed-First) wins by 18 points. Emergency priority requires prioritizing ambulance speed over collateral traffic delay.",
+      "heatmap_a_url": "file:///data/heatmaps/surface_streets_heatmap.png",
+      "heatmap_b_url": "file:///data/heatmaps/highway_1_heatmap.png",
       "counterfactual": {
         "baseline_eta_no_intervention": 22,
         "planned_eta_with_intervention": 8,
@@ -56,16 +56,192 @@
     },
     "explainability": {
       "decision": "Route ambulance via Surface Streets",
-      "reasoning_one_liner": "Surface Streets route saves ambulance 3 minutes, impacts 12 vehicles for 2 minutes average. Meets emergency-response thresholds.",
-      "counterfactual": "Without intervention: 22 min ETA. With this plan: 8 min ETA. Saves 14 minutes.",
-      "confidence": 0.92,
+      "reasoning_one_liner": "Surface Streets saves ambulance 14 minutes, delaying 12 vehicles for 2 minutes average. Critical emergency warrants prioritizing speed.",
+      "counterfactual": "Without preemption: 22 min ETA. With this plan: 8 min ETA. Saves 14 minutes.",
+      "confidence": 0.95,
       "approval_required": true
     }
   },
-  "expected_outputs": {
-    "total_time_seconds": 6.5,
-    "ambulance_arrives_at_seconds": 480,
-    "final_approval_status": "approved",
-    "success_message": "Ambulance routed successfully. Arrival time: 7:42 (3:18 faster than baseline)"
+  "scenarios": {
+    "medical": {
+      "incident_id": "DEMO_MEDICAL",
+      "incident_type": "medical_emergency",
+      "description": "Cardiac patient dispatch near Los Angeles Downtown Area",
+      "location": {
+        "lat": 34.0522,
+        "lng": -118.2437,
+        "area_name": "Downtown LA - 5th & Broadway"
+      },
+      "destination": {
+        "name": "County Hospital",
+        "lat": 34.0722,
+        "lng": -118.2637
+      },
+      "baseline_eta_minutes": 22,
+      "current_time": "17:45",
+      "pre_computed_results": {
+        "route_a_proposal": {
+          "agent_id": "route_a_speed_first",
+          "recommended_route": "Surface Streets",
+          "ambulance_eta": 8,
+          "vehicles_impacted": 12,
+          "avg_delay_per_vehicle": 2,
+          "safety_score": 0.90,
+          "reasoning": "Surface Streets is the shortest path, saving 14 minutes off baseline to prioritize cardiac patient survival.",
+          "confidence": 0.95
+        },
+        "route_b_proposal": {
+          "agent_id": "route_b_fairness_first",
+          "recommended_route": "Highway 1",
+          "ambulance_eta": 11,
+          "vehicles_impacted": 3,
+          "avg_delay_per_vehicle": 4,
+          "safety_score": 0.80,
+          "reasoning": "Highway 1 balances speed with minimal collateral delay (only 3 vehicles delayed).",
+          "confidence": 0.88
+        },
+        "negotiation_result": {
+          "winner": "route_a_speed_first",
+          "score_a": 92.0,
+          "score_b": 74.0,
+          "margin": 18.0,
+          "reasoning": "Agent A (Speed-First) wins by 18 points. Emergency priority requires prioritizing ambulance speed over collateral traffic delay.",
+          "heatmap_a_url": "file:///data/heatmaps/surface_streets_heatmap.png",
+          "heatmap_b_url": "file:///data/heatmaps/highway_1_heatmap.png",
+          "counterfactual": {
+            "baseline_eta_no_intervention": 22,
+            "planned_eta_with_intervention": 8,
+            "time_saved": 14
+          }
+        },
+        "explainability": {
+          "decision": "Route ambulance via Surface Streets",
+          "reasoning_one_liner": "Surface Streets saves ambulance 14 minutes, delaying 12 vehicles for 2 minutes average. Critical emergency warrants prioritizing speed.",
+          "counterfactual": "Without preemption: 22 min ETA. With this plan: 8 min ETA. Saves 14 minutes.",
+          "confidence": 0.95,
+          "approval_required": true
+        }
+      }
+    },
+    "accident": {
+      "incident_id": "DEMO_ACCIDENT",
+      "incident_type": "accident",
+      "description": "Multi-vehicle collision near Downtown LA",
+      "location": {
+        "lat": 34.0562,
+        "lng": -118.2487,
+        "area_name": "Downtown LA - Broadway & Elm St"
+      },
+      "destination": {
+        "name": "County Hospital",
+        "lat": 34.0722,
+        "lng": -118.2637
+      },
+      "baseline_eta_minutes": 18,
+      "current_time": "18:00",
+      "pre_computed_results": {
+        "route_a_proposal": {
+          "agent_id": "route_a_speed_first",
+          "recommended_route": "Surface Streets",
+          "ambulance_eta": 9,
+          "vehicles_impacted": 18,
+          "avg_delay_per_vehicle": 3,
+          "safety_score": 0.88,
+          "reasoning": "Recommends Surface Streets for direct access to clear the collision zone as fast as possible.",
+          "confidence": 0.90
+        },
+        "route_b_proposal": {
+          "agent_id": "route_b_fairness_first",
+          "recommended_route": "Highway 1",
+          "ambulance_eta": 12,
+          "vehicles_impacted": 6,
+          "avg_delay_per_vehicle": 5,
+          "safety_score": 0.82,
+          "reasoning": "Highway 1 alternative significantly reduces local street backup and delays.",
+          "confidence": 0.85
+        },
+        "negotiation_result": {
+          "winner": "route_a_speed_first",
+          "score_a": 88.0,
+          "score_b": 82.0,
+          "margin": 6.0,
+          "reasoning": "Both proposals offer similar merit. Route A is recommended due to faster ETA, but has closer negotiation margins.",
+          "heatmap_a_url": "file:///data/heatmaps/surface_streets_heatmap.png",
+          "heatmap_b_url": "file:///data/heatmaps/highway_1_heatmap.png",
+          "counterfactual": {
+            "baseline_eta_no_intervention": 18,
+            "planned_eta_with_intervention": 9,
+            "time_saved": 9
+          }
+        },
+        "explainability": {
+          "decision": "Route ambulance via Surface Streets",
+          "reasoning_one_liner": "Plan A chosen with close margin (88 vs 82). Saves 9 minutes but delays 18 vehicles by 3 minutes. Standard approval required.",
+          "counterfactual": "Without preemption: 18 min ETA. With this plan: 9 min ETA. Saves 9 minutes.",
+          "confidence": 0.90,
+          "approval_required": true
+        }
+      }
+    },
+    "hazard": {
+      "incident_id": "DEMO_HAZARD",
+      "incident_type": "hazard",
+      "description": "Chemical spill near Long Beach",
+      "location": {
+        "lat": 33.7430,
+        "lng": -118.1180,
+        "area_name": "Long Beach - Pacific Coast Hwy"
+      },
+      "destination": {
+        "name": "County Hospital",
+        "lat": 34.0722,
+        "lng": -118.2637
+      },
+      "baseline_eta_minutes": 25,
+      "current_time": "18:15",
+      "pre_computed_results": {
+        "route_a_proposal": {
+          "agent_id": "route_a_speed_first",
+          "recommended_route": "Surface Streets",
+          "ambulance_eta": 15,
+          "vehicles_impacted": 10,
+          "avg_delay_per_vehicle": 2,
+          "safety_score": 0.85,
+          "reasoning": "Speeds through residential streets, but hazard priority is lower.",
+          "confidence": 0.80
+        },
+        "route_b_proposal": {
+          "agent_id": "route_b_fairness_first",
+          "recommended_route": "Highway 1",
+          "ambulance_eta": 16,
+          "vehicles_impacted": 2,
+          "avg_delay_per_vehicle": 4,
+          "safety_score": 0.87,
+          "reasoning": "Highway 1 keeps local residential streets clear. Slower by only 1 minute but delays only 2 vehicles.",
+          "confidence": 0.92
+        },
+        "negotiation_result": {
+          "winner": "route_b_fairness_first",
+          "score_a": 85.0,
+          "score_b": 87.0,
+          "margin": 2.0,
+          "reasoning": "Agent B (Fairness-First) wins by 2 points. For minor hazards, fairness overrides speed to maintain residential traffic flow.",
+          "heatmap_a_url": "file:///data/heatmaps/surface_streets_heatmap.png",
+          "heatmap_b_url": "file:///data/heatmaps/highway_1_heatmap.png",
+          "counterfactual": {
+            "baseline_eta_no_intervention": 25,
+            "planned_eta_with_intervention": 16,
+            "time_saved": 9
+          }
+        },
+        "explainability": {
+          "decision": "Route ambulance via Highway 1",
+          "reasoning_one_liner": "Highway 1 route recommended. Saves 9 minutes with negligible collateral delay (2 vehicles). Auto-executing.",
+          "counterfactual": "Without preemption: 25 min ETA. With this plan: 16 min ETA. Saves 9 minutes.",
+          "confidence": 0.92,
+          "approval_required": false
+        }
+      }
+    }
   }
 }

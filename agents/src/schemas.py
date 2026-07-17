@@ -54,6 +54,9 @@ class RouteAgentInput(BaseModel):
     destination: Dict[str, float]
     current_traffic_conditions: Dict[str, str]
     objectives: Dict[str, str]
+    incident_type: Optional[str] = "medical_emergency"
+    severity: Optional[str] = "critical"
+    priority_score: Optional[float] = 0.95
 
 
 class RouteProposal(BaseModel):
@@ -92,6 +95,7 @@ class SimulationInput(BaseModel):
     proposal_a: RouteProposal
     proposal_b: RouteProposal
     incident: IncidentClassification
+    incident_id: Optional[str] = None
 
 
 class NegotiationResult(BaseModel):

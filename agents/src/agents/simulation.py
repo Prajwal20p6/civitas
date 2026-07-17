@@ -32,10 +32,22 @@ class SimulationAgent(Agent):
 
         # 1. Run simulation to get metrics (with deadline enforcement)
         sim_a = self.simulator.simulate_route(
-            prop_a.recommended_route, base_eta, deadline=deadline
+            prop_a.recommended_route,
+            base_eta,
+            deadline=deadline,
+            proposal_eta=prop_a.ambulance_eta,
+            proposal_vehicles=prop_a.vehicles_impacted,
+            proposal_delay=prop_a.avg_delay_per_vehicle,
+            incident_id=inputs.incident_id,
         )
         sim_b = self.simulator.simulate_route(
-            prop_b.recommended_route, base_eta, deadline=deadline
+            prop_b.recommended_route,
+            base_eta,
+            deadline=deadline,
+            proposal_eta=prop_b.ambulance_eta,
+            proposal_vehicles=prop_b.vehicles_impacted,
+            proposal_delay=prop_b.avg_delay_per_vehicle,
+            incident_id=inputs.incident_id,
         )
 
         # 2. Score both routes using the scoring utility

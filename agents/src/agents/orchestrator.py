@@ -93,12 +93,15 @@ class OrchestratorAgent(SequentialAgent):
         # Step 2: Generate Proposals from Route Agents A & B (ParallelAgent execution)
         route_input = RouteAgentInput(
             incident_location=incident.location,
-            destination={"lat": 37.4280, "lng": -122.0910},
+            destination={"lat": 34.0722, "lng": -118.2637},
             current_traffic_conditions={
                 "Surface Streets": "heavy",
                 "Highway 1": "moderate",
             },
             objectives={"priority": "optimize_eta"},
+            incident_type=classification.incident_type,
+            severity=classification.severity,
+            priority_score=classification.priority_score,
         )
 
         self.db.push_reasoning_log(
@@ -134,7 +137,10 @@ class OrchestratorAgent(SequentialAgent):
             i_id, "[Orchestrator] Invoking simulation and scoring resolver..."
         )
         sim_input = SimulationInput(
-            proposal_a=proposal_a, proposal_b=proposal_b, incident=classification
+            proposal_a=proposal_a,
+            proposal_b=proposal_b,
+            incident=classification,
+            incident_id=i_id,
         )
 
         negotiation_res = await self.simulation.execute(sim_input)

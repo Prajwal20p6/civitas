@@ -31,7 +31,7 @@ APPROVAL_TIMEOUT_SECONDS = 120.0
 
 # Auto-approval threshold: incidents with impact_score below this
 # are automatically approved without operator intervention
-AUTO_APPROVE_THRESHOLD = 0.5
+AUTO_APPROVE_THRESHOLD = 0.4
 
 # Demo mode auto-approve delay
 DEMO_AUTO_APPROVE_DELAY = 5.0
@@ -101,7 +101,7 @@ class ApprovalGateAgent(Agent):
                 self.db.update_incident(i_id, {"status": "executing"})
                 self.db.push_reasoning_log(
                     i_id,
-                    f"[ApprovalGate] Auto-approved: impact below threshold ({impact:.2f} < {AUTO_APPROVE_THRESHOLD})",
+                    f"[ApprovalGate] Auto-approved: impact below threshold ({impact:.2f} < {AUTO_APPROVE_THRESHOLD}). Bypass Human Approval.",
                 )
             return {
                 "status": "auto_approved",
@@ -137,9 +137,10 @@ class ApprovalGateAgent(Agent):
         # 3. Real approval flow — update status and poll Firestore
         if self.db:
             self.db.update_incident(i_id, {"status": "pending_approval"})
+            label = "CRITICAL ESCALATION" if impact > 0.7 else "STANDARD APPROVAL"
             self.db.push_reasoning_log(
                 i_id,
-                f"[ApprovalGate] High-impact scenario ({impact:.2f}). Awaiting operator approval...",
+                f"[ApprovalGate] {label} required (impact score: {impact:.2f}). Awaiting operator approval...",
             )
 
         t0 = time.monotonic()
