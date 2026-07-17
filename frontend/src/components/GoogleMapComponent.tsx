@@ -151,10 +151,8 @@ export const GoogleMapComponent: React.FC<GoogleMapComponentProps> = ({
       <div className="relative w-full h-[500px] border border-slate-200 rounded-2xl overflow-hidden shadow-md">
         <GoogleMap
           mapContainerStyle={mapContainerStyle}
-          {...({
-            defaultCenter: centerLA,
-            defaultZoom: 11
-          } as any)}
+          center={centerLA}
+          zoom={11}
           options={{
           styles: [
             { elementType: "geometry", stylers: [{ color: "#f5f5f5" }] },
